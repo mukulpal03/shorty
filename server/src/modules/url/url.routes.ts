@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createShortUrlController,
   deleteLongUrlController,
+  getAnalyticsController,
   retrieveOriginalUrlController,
   updateLongUrlController,
 } from "./url.controller";
@@ -15,5 +16,7 @@ router
   .get(retrieveOriginalUrlController)
   .put(updateLongUrlController)
   .delete(deleteLongUrlController);
+
+router.route("/:shortUrl/stats").get(getAnalyticsController);
 
 export default router;

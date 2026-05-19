@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import {
   createShortUrlService,
   deleteLongUrlService,
+  getAnalyticsService,
   retrieveLongUrlService,
   updateLongUrlService,
 } from "./url.service";
@@ -90,5 +91,26 @@ export const deleteLongUrlController = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error deleting long URL:", error);
     res.status(500).json({ error: "Failed to delete long URL" });
+  }
+};
+
+export const getAnalyticsController = async (req: Request, res: Response) => {
+  const { shortUrl } = req.params;
+
+  if (!shortUrl) {
+    return res.status(400).json({ error: "Short URL is required" });
+  }
+
+  try {
+    const url = await getAnalyticsService(String(shortUrl));
+
+    if (!url) {
+      return res.status(404).json({ error: "URL not found" });
+    }
+
+    res.status(200).json({ url });
+  } catch (error) {
+    console.error("Error getting analytics:", error);
+    res.status(500).json({ error: "Failed to get analytics" });
   }
 };

@@ -11,6 +11,10 @@ const urlSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    accessCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );

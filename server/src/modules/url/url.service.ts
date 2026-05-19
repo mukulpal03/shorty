@@ -15,7 +15,11 @@ export const createShortUrlService = async (longUrl: string) => {
 
 export const retrieveLongUrlService = async (shortUrl: string) => {
   try {
-    const url = await Url.findOne({ shortUrl });
+    const url = await Url.findOneAndUpdate(
+      { shortUrl },
+      { $inc: { accessCount: 1 } },
+      { new: true },
+    );
     return url;
   } catch (error) {
     console.error("Error retrieving long URL:", error);
@@ -44,5 +48,14 @@ export const deleteLongUrlService = async (shortUrl: string) => {
     return url;
   } catch (error) {
     console.error("Error deleting long URL:", error);
+  }
+};
+
+export const getAnalyticsService = async (shortUrl: string) => {
+  try {
+    const url = await Url.findOne({ shortUrl });
+    return url;
+  } catch (error) {
+    console.error("Error getting analytics:", error);
   }
 };
