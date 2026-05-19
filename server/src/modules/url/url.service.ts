@@ -18,7 +18,7 @@ export const retrieveLongUrlService = async (shortUrl: string) => {
     const url = await Url.findOneAndUpdate(
       { shortUrl },
       { $inc: { accessCount: 1 } },
-      { new: true },
+      { returnDocument: "after" },
     );
     return url;
   } catch (error) {
@@ -34,7 +34,7 @@ export const updateLongUrlService = async (
     const url = await Url.findOneAndUpdate(
       { shortUrl },
       { originalUrl: longUrl },
-      { new: true },
+      { returnDocument: "after" },
     );
     return url;
   } catch (error) {
