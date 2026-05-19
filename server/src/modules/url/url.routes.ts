@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createShortUrlController,
+  deleteLongUrlController,
   retrieveOriginalUrlController,
   updateLongUrlController,
 } from "./url.controller";
@@ -12,6 +13,7 @@ router.route("/").post(createShortUrlController);
 router
   .route("/:shortUrl")
   .get(retrieveOriginalUrlController)
-  .put(updateLongUrlController);
+  .put(updateLongUrlController)
+  .delete(deleteLongUrlController);
 
 export default router;

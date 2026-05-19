@@ -37,3 +37,12 @@ export const updateLongUrlService = async (
     console.error("Error updating long URL:", error);
   }
 };
+
+export const deleteLongUrlService = async (shortUrl: string) => {
+  try {
+    const url = await Url.findOneAndDelete({ shortUrl });
+    return url;
+  } catch (error) {
+    console.error("Error deleting long URL:", error);
+  }
+};

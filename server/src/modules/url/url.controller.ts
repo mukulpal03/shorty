@@ -1,5 +1,10 @@
 import type { Request, Response } from "express";
-import { createShortUrlService, retrieveLongUrlService, updateLongUrlService } from "./url.service";
+import {
+  createShortUrlService,
+  deleteLongUrlService,
+  retrieveLongUrlService,
+  updateLongUrlService,
+} from "./url.service";
 
 export const createShortUrlController = async (req: Request, res: Response) => {
   const { longUrl } = req.body;
@@ -64,5 +69,26 @@ export const updateLongUrlController = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error updating long URL:", error);
     res.status(500).json({ error: "Failed to update long URL" });
+  }
+};
+
+export const deleteLongUrlController = async (req: Request, res: Response) => {
+  const { shortUrl } = req.params;
+
+  if (!shortUrl) {
+    return res.status(400).json({ error: "Short URL is required" });
+  }
+
+  try {
+    const url = await deleteLongUrlService(String(shortUrl));
+
+    if (!url) {
+      return res.status(404).json({ error: "URL not found" });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting long URL:", error);
+    res.status(500).json({ error: "Failed to delete long URL" });
   }
 };
