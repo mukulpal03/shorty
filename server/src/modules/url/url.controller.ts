@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createShortUrlService, retrieveLongUrlService } from "./url.service";
+import { createShortUrlService, retrieveLongUrlService, updateLongUrlService } from "./url.service";
 
 export const createShortUrlController = async (req: Request, res: Response) => {
   const { longUrl } = req.body;
@@ -38,5 +38,31 @@ export const retrieveOriginalUrlController = async (
   } catch (error) {
     console.error("Error retrieving long URL:", error);
     res.status(500).json({ error: "Failed to retrieve long URL" });
+  }
+};
+
+export const updateLongUrlController = async (req: Request, res: Response) => {
+  const { longUrl } = req.body;
+  const { shortUrl } = req.params;
+
+  if (!longUrl) {
+    return res.status(400).json({ error: "Long URL is required" });
+  }
+
+  if (!shortUrl) {
+    return res.status(400).json({ error: "Short URL is required" });
+  }
+
+  try {
+    const url = await updateLongUrlService(String(shortUrl), longUrl);
+
+    if (!url) {
+      return res.status(404).json({ error: "URL not found" });
+    }
+
+    res.status(200).json({ url });
+  } catch (error) {
+    console.error("Error updating long URL:", error);
+    res.status(500).json({ error: "Failed to update long URL" });
   }
 };

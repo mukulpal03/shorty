@@ -19,6 +19,21 @@ export const retrieveLongUrlService = async (shortUrl: string) => {
     return url;
   } catch (error) {
     console.error("Error retrieving long URL:", error);
-    return null;
+  }
+};
+
+export const updateLongUrlService = async (
+  shortUrl: string,
+  longUrl: string,
+) => {
+  try {
+    const url = await Url.findOneAndUpdate(
+      { shortUrl },
+      { originalUrl: longUrl },
+      { new: true },
+    );
+    return url;
+  } catch (error) {
+    console.error("Error updating long URL:", error);
   }
 };
