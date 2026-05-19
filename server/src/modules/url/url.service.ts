@@ -12,3 +12,12 @@ export const createShortUrlService = async (longUrl: string) => {
     console.error("Error creating short URL:", error);
   }
 };
+
+export const retrieveLongUrlService = async (shortUrl: string) => {
+  try {
+    const url = await Url.findOne({ shortUrl });
+    return url;
+  } catch (error) {
+    console.error("Error retrieving long URL:", error);
+  }
+};
