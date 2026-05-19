@@ -19,5 +19,6 @@ export const retrieveLongUrlService = async (shortUrl: string) => {
     return url;
   } catch (error) {
     console.error("Error retrieving long URL:", error);
+    return null;
   }
 };

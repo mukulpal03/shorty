@@ -29,6 +29,11 @@ export const retrieveOriginalUrlController = async (
 
   try {
     const url = await retrieveLongUrlService(String(shortUrl));
+
+    if (!url) {
+      return res.status(404).json({ error: "URL not found" });
+    }
+
     res.status(200).json({ url });
   } catch (error) {
     console.error("Error retrieving long URL:", error);
