@@ -1,42 +1,24 @@
-import { ArrowRight, Check } from "lucide-react"
+import { Check } from "lucide-react"
 
 import { SectionHeader } from "@/components/common/SectionHeader"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
-const PLANS = [
-  {
-    name: "Free",
-    price: "$0",
-    description: "Perfect for getting started",
-    features: ["100 links / month", "Basic analytics", "shorty.co domain"],
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "$12",
-    description: "For creators and small teams",
-    features: [
-      "Unlimited links",
-      "Advanced analytics",
-      "Custom domains",
-      "QR codes",
-    ],
-    highlighted: true,
-  },
-  {
-    name: "Business",
-    price: "$49",
-    description: "For growing organizations",
-    features: [
-      "Everything in Pro",
-      "Team workspaces",
-      "SSO & SAML",
-      "Priority support",
-    ],
-    highlighted: false,
-  },
-] as const
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Item,
+  ItemContent,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
+import { PLANS } from "@/constants/landing"
 
 export function PricingSection() {
   return (
@@ -59,13 +41,13 @@ export function PricingSection() {
               }
             >
               {plan.highlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
                   Most popular
-                </div>
+                </Badge>
               )}
               <CardHeader>
                 <CardTitle>{plan.name}</CardTitle>
-                <p className="text-sm text-muted-foreground">{plan.description}</p>
+                <CardDescription>{plan.description}</CardDescription>
                 <div className="pt-2">
                   <span className="text-4xl font-semibold tracking-tight">
                     {plan.price}
@@ -76,17 +58,25 @@ export function PricingSection() {
                 </div>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-3">
+                <ItemGroup className="gap-2">
                   {plan.features.map((feature) => (
-                    <li
+                    <Item
                       key={feature}
-                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                      size="sm"
+                      variant="default"
+                      className="border-transparent px-0 py-1"
                     >
-                      <Check className="mt-0.5 size-4 shrink-0 text-foreground" />
-                      {feature}
-                    </li>
+                      <ItemMedia variant="icon">
+                        <Check />
+                      </ItemMedia>
+                      <ItemContent>
+                        <ItemTitle className="font-normal text-muted-foreground">
+                          {feature}
+                        </ItemTitle>
+                      </ItemContent>
+                    </Item>
                   ))}
-                </ul>
+                </ItemGroup>
               </CardContent>
               <CardFooter>
                 <Button

@@ -1,4 +1,7 @@
 import { Logo } from "@/components/common/Logo"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { FOOTER_LINKS, SITE } from "@/constants/landing"
 
 const linkGroups = [
@@ -22,15 +25,17 @@ export function Footer() {
           {linkGroups.map((group) => (
             <div key={group.title}>
               <h3 className="text-sm font-medium">{group.title}</h3>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-4 space-y-1">
                 {group.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="h-auto p-0 text-muted-foreground"
+                      asChild
                     >
-                      {link.label}
-                    </a>
+                      <a href={link.href}>{link.label}</a>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -38,13 +43,15 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-8 sm:flex-row">
+        <Separator className="my-8" />
+
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
-          <p className="font-mono text-xs text-muted-foreground">
+          <Badge variant="outline" className="font-mono">
             {SITE.domain}
-          </p>
+          </Badge>
         </div>
       </div>
     </footer>

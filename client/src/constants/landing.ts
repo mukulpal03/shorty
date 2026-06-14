@@ -33,6 +33,14 @@ export type Stat = {
   label: string
 }
 
+export type Plan = {
+  name: string
+  price: string
+  description: string
+  features: readonly string[]
+  highlighted: boolean
+}
+
 export const SITE = {
   name: "Shorty",
   tagline: "Short links. Real insights.",
@@ -133,3 +141,37 @@ export const HERO_BADGES = [
   { icon: Globe, label: "Global edge network" },
   { icon: Sparkles, label: "Free to start" },
 ] as const
+
+export const PLANS: readonly Plan[] = [
+  {
+    name: "Free",
+    price: "$0",
+    description: "Perfect for getting started",
+    features: ["100 links / month", "Basic analytics", "shorty.co domain"],
+    highlighted: false,
+  },
+  {
+    name: "Pro",
+    price: "$12",
+    description: "For creators and small teams",
+    features: [
+      "Unlimited links",
+      "Advanced analytics",
+      "Custom domains",
+      "QR codes",
+    ],
+    highlighted: true,
+  },
+  {
+    name: "Business",
+    price: "$49",
+    description: "For growing organizations",
+    features: [
+      "Everything in Pro",
+      "Team workspaces",
+      "SSO & SAML",
+      "Priority support",
+    ],
+    highlighted: false,
+  },
+]

@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react"
 
 import { GridBackground } from "@/components/common/GridBackground"
 import { UrlShortenerMockup } from "@/components/landing/UrlShortenerMockup"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HERO_BADGES, SITE } from "@/constants/landing"
 
@@ -12,9 +13,9 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
+          <Badge variant="secondary" className="mb-6">
             Now in public beta
-          </div>
+          </Badge>
 
           <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             {SITE.tagline.split(".")[0]}.
@@ -39,13 +40,10 @@ export function HeroSection() {
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             {HERO_BADGES.map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs text-muted-foreground"
-              >
-                <Icon className="size-3.5" />
+              <Badge key={label} variant="outline">
+                <Icon data-icon="inline-start" />
                 {label}
-              </div>
+              </Badge>
             ))}
           </div>
         </div>

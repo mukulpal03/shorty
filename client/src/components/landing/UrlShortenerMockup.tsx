@@ -1,7 +1,23 @@
 import { ArrowRight, Copy, MousePointerClick, TrendingUp, type LucideIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
 import { SITE } from "@/constants/landing"
 import { cn } from "@/lib/utils"
 
@@ -20,68 +36,71 @@ export function UrlShortenerMockup({ className }: UrlShortenerMockupProps) {
       <Card className="relative overflow-hidden shadow-lg shadow-foreground/5 ring-foreground/8">
         <CardContent className="space-y-4 pt-0">
           <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">
-              Destination URL
-            </label>
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2.5">
-              <span className="truncate font-mono text-sm text-muted-foreground">
-                https://your-website.com/blog/launch-announcement
-              </span>
-            </div>
+            <Label htmlFor="destination-url">Destination URL</Label>
+            <InputGroup className="h-10 bg-muted/40">
+              <InputGroupInput
+                id="destination-url"
+                readOnly
+                value="https://your-website.com/blog/launch-announcement"
+                className="font-mono text-muted-foreground"
+              />
+            </InputGroup>
           </div>
 
           <div className="flex items-center justify-center">
-            <div className="flex size-8 items-center justify-center rounded-full border border-border bg-background">
-              <ArrowRight className="size-4 text-muted-foreground" />
-            </div>
+            <Badge variant="outline" className="size-8 rounded-full p-0">
+              <ArrowRight className="size-4" />
+            </Badge>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">
-              Short link
-            </label>
-            <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2.5">
-              <span className="truncate font-mono text-sm font-medium">
-                {SITE.domain}/launch
-              </span>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                className="ml-auto shrink-0"
-                aria-label="Copy link"
-              >
-                <Copy />
-              </Button>
-            </div>
+            <Label htmlFor="short-link">Short link</Label>
+            <InputGroup className="h-10 border-primary/20 bg-primary/5">
+              <InputGroupInput
+                id="short-link"
+                readOnly
+                value={`${SITE.domain}/launch`}
+                className="font-mono font-medium"
+              />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton aria-label="Copy link">
+                  <Copy />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 border-t border-border/60 pt-4">
-            <StatPill icon={MousePointerClick} label="Clicks" value="2,847" />
-            <StatPill icon={TrendingUp} label="CTR" value="12.4%" />
-            <StatPill icon={ArrowRight} label="Redirects" value="<50ms" />
-          </div>
+          <Separator />
+
+          <ItemGroup className="grid grid-cols-3 gap-3">
+            <StatItem icon={MousePointerClick} label="Clicks" value="2,847" />
+            <StatItem icon={TrendingUp} label="CTR" value="12.4%" />
+            <StatItem icon={ArrowRight} label="Redirects" value="<50ms" />
+          </ItemGroup>
         </CardContent>
       </Card>
     </div>
   )
 }
 
-type StatPillProps = {
+type StatItemProps = {
   icon: LucideIcon
   label: string
   value: string
 }
 
-function StatPill({ icon: Icon, label, value }: StatPillProps) {
+function StatItem({ icon: Icon, label, value }: StatItemProps) {
   return (
-    <div className="rounded-lg bg-muted/50 px-3 py-2.5 text-center">
-      <div className="flex items-center justify-center gap-1 text-muted-foreground">
-        <Icon className="size-3" />
-        <span className="text-[10px] font-medium uppercase tracking-wide">
+    <Item variant="muted" size="xs" className="flex-col items-center text-center">
+      <ItemMedia variant="icon">
+        <Icon />
+      </ItemMedia>
+      <ItemContent className="items-center text-center">
+        <ItemDescription className="text-[10px] uppercase tracking-wide">
           {label}
-        </span>
-      </div>
-      <p className="mt-1 text-sm font-semibold tabular-nums">{value}</p>
-    </div>
+        </ItemDescription>
+        <ItemTitle className="tabular-nums">{value}</ItemTitle>
+      </ItemContent>
+    </Item>
   )
 }

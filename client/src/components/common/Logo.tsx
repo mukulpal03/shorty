@@ -1,5 +1,6 @@
 import { Link2 } from "lucide-react"
 
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { SITE } from "@/constants/landing"
 
@@ -14,9 +15,9 @@ export function Logo({ className, showText = true }: LogoProps) {
       href="/"
       className={cn("inline-flex items-center gap-2.5 font-medium", className)}
     >
-      <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+      <Badge className="size-8 rounded-lg p-0">
         <Link2 className="size-4" strokeWidth={2.5} />
-      </span>
+      </Badge>
       {showText && (
         <span className="text-base tracking-tight">{SITE.name}</span>
       )}

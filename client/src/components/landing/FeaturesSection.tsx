@@ -1,5 +1,12 @@
 import { SectionHeader } from "@/components/common/SectionHeader"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
 import { FEATURES } from "@/constants/landing"
 
 export function FeaturesSection() {
@@ -12,26 +19,28 @@ export function FeaturesSection() {
           description="From solo creators to growing teams, Shorty gives you the tools to create, share, and measure every link."
         />
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ItemGroup className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
-            <Card
+            <Item
               key={feature.title}
-              className="transition-colors hover:bg-muted/30"
+              variant="outline"
+              className="flex-col items-start hover:bg-muted/30"
             >
-              <CardHeader>
-                <div className="mb-1 flex size-9 items-center justify-center rounded-lg border border-border bg-muted/50">
-                  <feature.icon className="size-4 text-foreground" />
-                </div>
-                <CardTitle className="text-base">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+              <ItemMedia
+                variant="icon"
+                className="size-9 rounded-lg border border-border bg-muted/50"
+              >
+                <feature.icon />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>{feature.title}</ItemTitle>
+                <ItemDescription className="line-clamp-none">
                   {feature.description}
-                </p>
-              </CardContent>
-            </Card>
+                </ItemDescription>
+              </ItemContent>
+            </Item>
           ))}
-        </div>
+        </ItemGroup>
       </div>
     </section>
   )

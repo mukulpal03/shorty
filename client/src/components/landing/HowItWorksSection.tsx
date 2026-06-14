@@ -1,4 +1,11 @@
 import { SectionHeader } from "@/components/common/SectionHeader"
+import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { STEPS } from "@/constants/landing"
 
 export function HowItWorksSection() {
@@ -14,16 +21,18 @@ export function HowItWorksSection() {
           description="No complex setup. Paste a URL, customize it, and start tracking in under a minute."
         />
 
-        <ol className="mt-14 grid gap-8 md:grid-cols-3">
+        <ol className="mt-14 grid gap-4 md:grid-cols-3">
           {STEPS.map((step) => (
-            <li key={step.step} className="relative">
-              <div className="flex size-10 items-center justify-center rounded-full border border-border bg-background text-sm font-semibold">
-                {step.step}
-              </div>
-              <h3 className="mt-5 text-lg font-medium">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {step.description}
-              </p>
+            <li key={step.step}>
+              <Card>
+                <CardHeader>
+                  <Badge variant="outline" className="size-8 rounded-full p-0">
+                    {step.step}
+                  </Badge>
+                  <CardTitle className="text-lg">{step.title}</CardTitle>
+                  <CardDescription>{step.description}</CardDescription>
+                </CardHeader>
+              </Card>
             </li>
           ))}
         </ol>

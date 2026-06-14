@@ -1,35 +1,38 @@
 import { ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 export function CtaSection() {
   return (
     <section className="border-t border-border/60 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30 px-6 py-14 text-center sm:px-12 sm:py-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.97_0_0)_0%,transparent_70%)]"
-          />
-          <div className="relative">
-            <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <Card className="overflow-hidden bg-muted/30 text-center">
+          <CardHeader className="mx-auto max-w-lg items-center px-6 pt-14 sm:px-12 sm:pt-16">
+            <CardTitle className="text-3xl text-balance sm:text-4xl">
               Ready to shorten smarter?
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
+            </CardTitle>
+            <CardDescription className="text-base">
               Join thousands of marketers, founders, and teams who trust Shorty
               for their most important links.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button size="lg" className="h-10 px-5">
-                Create free account
-                <ArrowRight data-icon="inline-end" />
-              </Button>
-              <Button variant="outline" size="lg" className="h-10 px-5">
-                Talk to sales
-              </Button>
-            </div>
-          </div>
-        </div>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center gap-3 pb-14 sm:flex-row sm:pb-16">
+            <Button size="lg" className="h-10 px-5">
+              Create free account
+              <ArrowRight data-icon="inline-end" />
+            </Button>
+            <Button variant="outline" size="lg" className="h-10 px-5">
+              Talk to sales
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </section>
   )
