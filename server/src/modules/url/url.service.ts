@@ -1,15 +1,13 @@
 import Url from "./url.model";
-import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export const createShortUrlService = async (longUrl: string) => {
-  const shortUrl = await bcrypt.hash(longUrl, 10);
-
-  console.log(shortUrl);
+  const shortUrl = crypto.createHash('md5').update(longUrl).digest('base64url').slice(0, 7)
 
   try {
-    // const url = await Url.create({ originalUrl: longUrl, shortUrl: shortUrl });
+    const url = await Url.create({ originalUrl: longUrl, shortUrl: shortUrl });
 
-    return shortUrl;
+    return url;
   } catch (error) {
     console.error("Error creating short URL:", error);
   }
