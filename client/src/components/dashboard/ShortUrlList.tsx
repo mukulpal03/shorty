@@ -22,11 +22,17 @@ import { formatDate } from "@/lib/format-date"
 import { getShortLinkDisplay } from "@/lib/short-url"
 import type { ShortUrl } from "@/types/url"
 
+type CreateUrlResult =
+  | { success: true; url: ShortUrl }
+  | { success: false; error: string }
+
 type ShortUrlListProps = {
   urls: ShortUrl[]
   isLoading: boolean
   error: string | null
   onRetry: () => void
+  isCreating: boolean
+  onCreate: (longUrl: string) => Promise<CreateUrlResult>
 }
 
 export function ShortUrlList({
@@ -34,6 +40,8 @@ export function ShortUrlList({
   isLoading,
   error,
   onRetry,
+  isCreating,
+  onCreate,
 }: ShortUrlListProps) {
   if (isLoading) {
     return (
@@ -73,7 +81,7 @@ export function ShortUrlList({
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <DashboardEmptyAction />
+          <DashboardEmptyAction isCreating={isCreating} onCreate={onCreate} />
         </EmptyContent>
       </Empty>
     )

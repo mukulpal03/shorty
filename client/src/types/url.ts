@@ -19,6 +19,10 @@ export type GetAllUrlsResponse = {
   urls?: UrlDocument[]
 }
 
+export type CreateUrlRequest = {
+  longUrl: string
+}
+
 export type CreateUrlResponse = {
   shortUrl?: UrlDocument
 }

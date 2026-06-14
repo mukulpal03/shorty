@@ -1,6 +1,8 @@
 import { API_ENDPOINTS } from "@/constants/api"
-import { apiGet } from "@/lib/api/client"
+import { apiGet, apiPost } from "@/lib/api/client"
+import { ApiError } from "@/lib/api/errors"
 import type {
+  CreateUrlResponse,
   GetAllUrlsResponse,
   ShortUrl,
   UrlDocument,
@@ -21,4 +23,16 @@ export async function fetchAllUrls(): Promise<ShortUrl[]> {
   const documents = response?.urls ?? []
 
   return documents.map(mapUrlDocument)
+}
+
+export async function createShortUrl(longUrl: string): Promise<ShortUrl> {
+  const response = await apiPost<CreateUrlResponse>(API_ENDPOINTS.urls, {
+    longUrl,
+  })
+
+  if (!response?.shortUrl) {
+    throw new ApiError("Failed to create short URL")
+  }
+
+  return mapUrlDocument(response.shortUrl)
 }
