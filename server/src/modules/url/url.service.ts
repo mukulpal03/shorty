@@ -59,3 +59,12 @@ export const getAnalyticsService = async (shortUrl: string) => {
     console.error("Error getting analytics:", error);
   }
 };
+
+export const getAllUrlsService = async () => {
+  try {
+    const urls = await Url.find().sort({ createdAt: -1 });
+    return urls;
+  } catch (error) {
+    console.error("Error fetching all URLs:", error);
+  }
+};

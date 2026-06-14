@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createShortUrlController,
   deleteLongUrlController,
+  getAllUrlsController,
   getAnalyticsController,
   retrieveOriginalUrlController,
   updateLongUrlController,
@@ -9,7 +10,7 @@ import {
 
 const router = Router();
 
-router.route("/").post(createShortUrlController);
+router.route("/").get(getAllUrlsController).post(createShortUrlController);
 
 router
   .route("/:shortUrl")

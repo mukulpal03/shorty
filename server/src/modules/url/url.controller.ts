@@ -2,10 +2,21 @@ import type { Request, Response } from "express";
 import {
   createShortUrlService,
   deleteLongUrlService,
+  getAllUrlsService,
   getAnalyticsService,
   retrieveLongUrlService,
   updateLongUrlService,
 } from "./url.service";
+
+export const getAllUrlsController = async (_req: Request, res: Response) => {
+  try {
+    const urls = await getAllUrlsService();
+    res.status(200).json({ urls: urls ?? [] });
+  } catch (error) {
+    console.error("Error fetching all URLs:", error);
+    res.status(500).json({ error: "Failed to fetch URLs" });
+  }
+};
 
 export const createShortUrlController = async (req: Request, res: Response) => {
   const { longUrl } = req.body;
