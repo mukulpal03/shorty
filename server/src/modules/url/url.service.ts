@@ -1,13 +1,15 @@
-import { nanoid } from "nanoid";
 import Url from "./url.model";
+import bcrypt from "bcryptjs";
 
 export const createShortUrlService = async (longUrl: string) => {
-  const shortUrl = nanoid(6);
+  const shortUrl = await bcrypt.hash(longUrl, 10);
+
+  console.log(shortUrl);
 
   try {
-    const url = await Url.create({ originalUrl: longUrl, shortUrl: shortUrl });
+    // const url = await Url.create({ originalUrl: longUrl, shortUrl: shortUrl });
 
-    return url;
+    return shortUrl;
   } catch (error) {
     console.error("Error creating short URL:", error);
   }
