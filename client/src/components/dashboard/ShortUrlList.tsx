@@ -1,5 +1,6 @@
-import { Copy, ExternalLink, Trash2 } from "lucide-react"
+import { Copy, ExternalLink, RefreshCw, Trash2 } from "lucide-react"
 
+import { DashboardEmptyAction } from "@/components/dashboard/DashboardHeader"
 import { Button } from "@/components/ui/button"
 import {
   Empty,
@@ -17,11 +18,49 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { DashboardEmptyAction } from "@/components/dashboard/DashboardHeader"
-import { MOCK_SHORT_URLS, type MockShortUrl } from "@/constants/dashboard"
+import { formatDate } from "@/lib/format-date"
+import { getShortLinkDisplay } from "@/lib/short-url"
+import type { ShortUrl } from "@/types/url"
 
-export function ShortUrlList() {
-  if (MOCK_SHORT_URLS.length === 0) {
+type ShortUrlListProps = {
+  urls: ShortUrl[]
+  isLoading: boolean
+  error: string | null
+  onRetry: () => void
+}
+
+export function ShortUrlList({
+  urls,
+  isLoading,
+  error,
+  onRetry,
+}: ShortUrlListProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border p-8 text-center text-sm text-muted-foreground">
+        Loading your short links...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Empty className="border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <RefreshCw />
+          </EmptyMedia>
+          <EmptyTitle>Could not load links</EmptyTitle>
+          <EmptyDescription>{error}</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button onClick={() => void onRetry()}>Try again</Button>
+        </EmptyContent>
+      </Empty>
+    )
+  }
+
+  if (urls.length === 0) {
     return (
       <Empty className="border">
         <EmptyHeader>
@@ -30,8 +69,7 @@ export function ShortUrlList() {
           </EmptyMedia>
           <EmptyTitle>No short links yet</EmptyTitle>
           <EmptyDescription>
-            Create a short URL from any long link. Your links will appear here
-            once the backend is connected.
+            Create a short URL from any long link and it will show up here.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -53,7 +91,7 @@ export function ShortUrlList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {MOCK_SHORT_URLS.map((url) => (
+          {urls.map((url) => (
             <ShortUrlRow key={url.id} url={url} />
           ))}
         </TableBody>
@@ -62,12 +100,14 @@ export function ShortUrlList() {
   )
 }
 
-function ShortUrlRow({ url }: { url: MockShortUrl }) {
+function ShortUrlRow({ url }: { url: ShortUrl }) {
+  const shortLink = getShortLinkDisplay(url.shortUrl)
+
   return (
     <TableRow>
       <TableCell>
         <div className="space-y-1">
-          <p className="font-mono text-sm font-medium">{url.shortLink}</p>
+          <p className="font-mono text-sm font-medium">{shortLink}</p>
           <p className="truncate text-xs text-muted-foreground md:hidden">
             {url.originalUrl}
           </p>
@@ -79,7 +119,7 @@ function ShortUrlRow({ url }: { url: MockShortUrl }) {
         </span>
       </TableCell>
       <TableCell className="hidden text-muted-foreground sm:table-cell">
-        {url.createdAt}
+        {formatDate(url.createdAt)}
       </TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-1">
