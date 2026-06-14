@@ -40,7 +40,7 @@ export const retrieveOriginalUrlController = async (
       return res.status(404).json({ error: "URL not found" });
     }
 
-    res.status(200).json({ url });
+    res.status(302).redirect(url.originalUrl);
   } catch (error) {
     console.error("Error retrieving long URL:", error);
     res.status(500).json({ error: "Failed to retrieve long URL" });
