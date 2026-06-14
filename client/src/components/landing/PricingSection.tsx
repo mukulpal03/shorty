@@ -1,4 +1,5 @@
 import { Check } from "lucide-react"
+import { Link } from "react-router-dom"
 
 import { SectionHeader } from "@/components/common/SectionHeader"
 import { Badge } from "@/components/ui/badge"
@@ -19,6 +20,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item"
 import { PLANS } from "@/constants/landing"
+import { ROUTES } from "@/constants/routes"
 
 export function PricingSection() {
   return (
@@ -82,8 +84,9 @@ export function PricingSection() {
                 <Button
                   variant={plan.highlighted ? "default" : "outline"}
                   className="w-full"
+                  asChild
                 >
-                  Get started
+                  <Link to={ROUTES.dashboard}>Get started</Link>
                 </Button>
               </CardFooter>
             </Card>

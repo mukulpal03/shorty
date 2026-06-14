@@ -1,10 +1,12 @@
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 import { GridBackground } from "@/components/common/GridBackground"
 import { UrlShortenerMockup } from "@/components/landing/UrlShortenerMockup"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HERO_BADGES, SITE } from "@/constants/landing"
+import { ROUTES } from "@/constants/routes"
 
 export function HeroSection() {
   return (
@@ -13,10 +15,6 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="secondary" className="mb-6">
-            Now in public beta
-          </Badge>
-
           <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             {SITE.tagline.split(".")[0]}.
             <span className="block text-muted-foreground">
@@ -29,12 +27,14 @@ export function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" className="h-10 px-5">
-              Start for free
-              <ArrowRight data-icon="inline-end" />
+            <Button size="lg" className="h-10 px-5" asChild>
+              <Link to={ROUTES.dashboard}>
+                Start for free
+                <ArrowRight data-icon="inline-end" />
+              </Link>
             </Button>
-            <Button variant="outline" size="lg" className="h-10 px-5">
-              View demo
+            <Button variant="outline" size="lg" className="h-10 px-5" asChild>
+              <Link to={ROUTES.dashboard}>View demo</Link>
             </Button>
           </div>
 

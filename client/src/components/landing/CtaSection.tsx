@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { ROUTES } from "@/constants/routes"
 
 export function CtaSection() {
   return (
@@ -24,12 +26,14 @@ export function CtaSection() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-3 pb-14 sm:flex-row sm:pb-16">
-            <Button size="lg" className="h-10 px-5">
-              Create free account
-              <ArrowRight data-icon="inline-end" />
+            <Button size="lg" className="h-10 px-5" asChild>
+              <Link to={ROUTES.dashboard}>
+                Create free account
+                <ArrowRight data-icon="inline-end" />
+              </Link>
             </Button>
-            <Button variant="outline" size="lg" className="h-10 px-5">
-              Talk to sales
+            <Button variant="outline" size="lg" className="h-10 px-5" asChild>
+              <Link to={ROUTES.dashboard}>View dashboard</Link>
             </Button>
           </CardContent>
         </Card>

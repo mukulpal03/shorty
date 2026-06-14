@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 import { Logo } from "@/components/common/Logo"
 import { Button } from "@/components/ui/button"
@@ -9,6 +10,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import { NAV_LINKS } from "@/constants/landing"
+import { ROUTES } from "@/constants/routes"
 import { cn } from "@/lib/utils"
 
 type NavbarProps = {
@@ -39,12 +41,19 @@ export function Navbar({ className }: NavbarProps) {
         </NavigationMenu>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-            Log in
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:inline-flex"
+            asChild
+          >
+            <Link to={ROUTES.dashboard}>Log in</Link>
           </Button>
-          <Button size="sm">
-            Get started
-            <ArrowRight data-icon="inline-end" />
+          <Button size="sm" asChild>
+            <Link to={ROUTES.dashboard}>
+              Get started
+              <ArrowRight data-icon="inline-end" />
+            </Link>
           </Button>
         </div>
       </div>
