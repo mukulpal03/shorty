@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react"
+import { useState, type ReactNode, type SubmitEventHandler } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +20,7 @@ type CreateUrlDialogProps = {
 export function CreateUrlDialog({ trigger }: CreateUrlDialogProps) {
   const [open, setOpen] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
     setOpen(false)
   }
