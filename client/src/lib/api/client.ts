@@ -4,6 +4,12 @@ import { API_BASE_URL } from "@/constants/api"
 import { ApiError } from "@/lib/api/errors"
 import type { ApiErrorResponse } from "@/types/url"
 
+let onUnauthorized: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler
+}
+
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -20,13 +26,32 @@ api.interceptors.response.use(
       return Promise.reject(new ApiError(message))
     }
 
-    const status = error.response?.status
-    const message =
-      (error.response?.data as ApiErrorResponse | undefined)?.error ??
-      error.message ??
-      "An unexpected error occurred"
+    if (!error.response) {
+      const isNetwork =
+        error.code === "ERR_NETWORK" || error.message === "Network Error"
 
-    return Promise.reject(new ApiError(message, status))
+      return Promise.reject(
+        new ApiError(
+          isNetwork
+            ? "Unable to connect. Check your internet connection."
+            : error.message,
+          undefined,
+          "NETWORK_ERROR",
+        ),
+      )
+    }
+
+    const status = error.response.status
+    const data = error.response.data as ApiErrorResponse | undefined
+    const message =
+      data?.error ?? error.message ?? "An unexpected error occurred"
+    const code = data?.code
+
+    if (status === 401 && onUnauthorized) {
+      onUnauthorized()
+    }
+
+    return Promise.reject(new ApiError(message, status, code))
   },
 )
 

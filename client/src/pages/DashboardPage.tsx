@@ -1,10 +1,13 @@
+import { useAuth } from "@clerk/react"
+import { useEffect } from "react"
+
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { ShortUrlList } from "@/components/dashboard/ShortUrlList"
 import { DashboardNavbar } from "@/components/layout/DashboardNavbar"
 import { useShortUrls } from "@/hooks/use-short-urls"
+import { getErrorMessage } from "@/lib/api/errors"
+import { notifyWarning } from "@/lib/api/notify"
 import { syncMe } from "@/lib/api/users"
-import { useAuth } from "@clerk/react"
-import { useEffect } from "react"
 
 export function DashboardPage() {
   const { isLoaded, isSignedIn, getToken } = useAuth()
@@ -15,9 +18,8 @@ export function DashboardPage() {
 
     void getToken()
       .then((token) => syncMe(token))
-      .catch((e) => {
-        // non-blocking: dashboard can still work even if user sync fails
-        console.error("Failed to sync user:", e)
+      .catch((error) => {
+        notifyWarning(getErrorMessage(error) || "Could not sync your profile.")
       })
   }, [getToken, isLoaded, isSignedIn])
 

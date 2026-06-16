@@ -42,6 +42,7 @@ export function useShortUrls() {
     if (!isLoaded) return
 
     if (!isSignedIn) {
+      setState((current) => ({ ...current, isLoading: false }))
       return
     }
 
@@ -50,6 +51,15 @@ export function useShortUrls() {
       .then((result) => {
         if (cancelled) return
         setState((current) => ({ ...current, ...result, isLoading: false }))
+      })
+      .catch((error) => {
+        if (cancelled) return
+        setState((current) => ({
+          ...current,
+          urls: [],
+          error: getErrorMessage(error),
+          isLoading: false,
+        }))
       })
 
     return () => {
@@ -60,9 +70,18 @@ export function useShortUrls() {
   const refetch = useCallback(async () => {
     setState((current) => ({ ...current, isLoading: true, error: null }))
 
-    const token = await getToken()
-    const result = await loadUrls(token)
-    setState((current) => ({ ...current, ...result, isLoading: false }))
+    try {
+      const token = await getToken()
+      const result = await loadUrls(token)
+      setState((current) => ({ ...current, ...result, isLoading: false }))
+    } catch (error) {
+      setState((current) => ({
+        ...current,
+        urls: [],
+        error: getErrorMessage(error),
+        isLoading: false,
+      }))
+    }
   }, [getToken])
 
   const createUrl = useCallback(async (longUrl: string): Promise<CreateUrlResult> => {

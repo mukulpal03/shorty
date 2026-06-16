@@ -1,5 +1,5 @@
-import type { ReactNode } from "react"
 import { useAuth } from "@clerk/react"
+import type { ReactNode } from "react"
 import { Navigate, useLocation } from "react-router-dom"
 
 import { ROUTES } from "@/constants/routes"
@@ -8,7 +8,13 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const location = useLocation()
   const { isLoaded, isSignedIn } = useAuth()
 
-  if (!isLoaded) return null
+  if (!isLoaded) {
+    return (
+      <div className="flex min-h-svh items-center justify-center text-sm text-muted-foreground">
+        Loading...
+      </div>
+    )
+  }
 
   if (!isSignedIn) {
     return (
@@ -22,4 +28,3 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 
   return <>{children}</>
 }
-

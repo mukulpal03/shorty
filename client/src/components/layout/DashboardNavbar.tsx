@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom"
 import { useAuth, useClerk } from "@clerk/react"
+import { Link } from "react-router-dom"
 
 import { Logo } from "@/components/common/Logo"
 import { Button } from "@/components/ui/button"
 import { ROUTES } from "@/constants/routes"
+import { notifyError } from "@/lib/api/notify"
+import { getErrorMessage } from "@/lib/api/errors"
 import { cn } from "@/lib/utils"
 
 type DashboardNavbarProps = {
@@ -18,8 +20,7 @@ export function DashboardNavbar({ className }: DashboardNavbarProps) {
     try {
       await clerk.signOut({ redirectUrl: ROUTES.home })
     } catch (error) {
-      // keep UI responsive even if sign-out fails
-      console.error("Failed to sign out", error)
+      notifyError(error, getErrorMessage(error))
     }
   }
 
@@ -39,7 +40,7 @@ export function DashboardNavbar({ className }: DashboardNavbarProps) {
           </Button>
 
           {isLoaded && isSignedIn ? (
-            <Button variant="outline" size="sm" onClick={handleLogout}>
+            <Button variant="outline" size="sm" onClick={() => void handleLogout()}>
               Log out
             </Button>
           ) : null}

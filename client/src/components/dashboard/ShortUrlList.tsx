@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getErrorMessage } from "@/lib/api/errors"
 import { buildPublicShortUrl, copyToClipboard } from "@/lib/clipboard"
 import { formatDate } from "@/lib/format-date"
 import { getShortLinkDisplay } from "@/lib/short-url"
@@ -118,11 +119,15 @@ function ShortUrlRow({ url }: { url: ShortUrl }) {
   const resetTimerRef = useRef<number | null>(null)
 
   async function handleCopy() {
-    await copyToClipboard(publicShortUrl)
-    toast.success("Copied link to clipboard")
-    setDidCopy(true)
-    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current)
-    resetTimerRef.current = window.setTimeout(() => setDidCopy(false), 1200)
+    try {
+      await copyToClipboard(publicShortUrl)
+      toast.success("Copied link to clipboard")
+      setDidCopy(true)
+      if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current)
+      resetTimerRef.current = window.setTimeout(() => setDidCopy(false), 1200)
+    } catch (error) {
+      toast.error(getErrorMessage(error) || "Could not copy link")
+    }
   }
 
   return (

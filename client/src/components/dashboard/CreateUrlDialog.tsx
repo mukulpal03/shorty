@@ -1,5 +1,6 @@
 import { useActionState, useEffect, useState, type ReactNode } from "react"
 import { useFormStatus } from "react-dom"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -139,6 +140,7 @@ export function CreateUrlDialog({
   }
 
   const handleSuccess = () => {
+    toast.success("Short link created")
     handleOpenChange(false)
   }
 

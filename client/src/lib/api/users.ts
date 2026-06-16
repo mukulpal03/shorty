@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "@/constants/api"
 import { apiGet } from "@/lib/api/client"
 
 function authHeaders(token: string | null | undefined) {
@@ -16,6 +17,5 @@ export type MeResponse = {
 }
 
 export async function syncMe(token: string | null) {
-  return apiGet<MeResponse>("api/users/me", { headers: authHeaders(token) })
+  return apiGet<MeResponse>(API_ENDPOINTS.me, { headers: authHeaders(token) })
 }
-

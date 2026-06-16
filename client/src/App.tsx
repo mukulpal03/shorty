@@ -1,11 +1,16 @@
 import { BrowserRouter } from "react-router-dom"
 
+import { ApiAuthSetup } from "@/components/api/ApiAuthSetup"
+import { ErrorBoundary } from "@/components/common/ErrorBoundary"
 import { AppRoutes } from "@/routes"
 
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <ApiAuthSetup />
+      <ErrorBoundary>
+        <AppRoutes />
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }
