@@ -8,6 +8,11 @@ const urlSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    title: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
     originalUrl: {
       type: String,
       required: true,

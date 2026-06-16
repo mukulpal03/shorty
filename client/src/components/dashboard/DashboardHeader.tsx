@@ -2,7 +2,7 @@ import { Link2, Plus } from "lucide-react"
 
 import { CreateUrlDialog } from "@/components/dashboard/CreateUrlDialog"
 import { Button } from "@/components/ui/button"
-import type { ShortUrl } from "@/types/url"
+import type { CreateUrlInput, ShortUrl } from "@/types/url"
 
 type CreateUrlResult =
   | { success: true; url: ShortUrl }
@@ -12,7 +12,7 @@ type DashboardHeaderProps = {
   urlCount: number
   isLoading: boolean
   isCreating: boolean
-  onCreate: (longUrl: string) => Promise<CreateUrlResult>
+  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
 }
 
 export function DashboardHeader({
@@ -50,7 +50,7 @@ export function DashboardHeader({
 
 type DashboardEmptyActionProps = {
   isCreating: boolean
-  onCreate: (longUrl: string) => Promise<CreateUrlResult>
+  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
 }
 
 export function DashboardEmptyAction({

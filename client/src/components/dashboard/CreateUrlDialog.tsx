@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { ShortUrl } from "@/types/url"
+import type { CreateUrlInput, ShortUrl } from "@/types/url"
 
 type CreateUrlResult =
   | { success: true; url: ShortUrl }
@@ -32,12 +32,12 @@ const initialFormState: CreateUrlFormState = {
 
 type CreateUrlDialogProps = {
   trigger: ReactNode
-  onCreate: (longUrl: string) => Promise<CreateUrlResult>
+  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
   disabled?: boolean
 }
 
 type CreateUrlFormProps = {
-  onCreate: (longUrl: string) => Promise<CreateUrlResult>
+  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
   onSuccess: () => void
   onCancel: () => void
 }
@@ -71,12 +71,16 @@ function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
   const [formState, formAction] = useActionState(
     async (_previousState: CreateUrlFormState, formData: FormData) => {
       const trimmedUrl = formData.get("longUrl")?.toString().trim() ?? ""
+      const trimmedTitle = formData.get("title")?.toString().trim() ?? ""
 
       if (!trimmedUrl) {
         return { error: "Please enter a URL.", success: false }
       }
 
-      const result = await onCreate(trimmedUrl)
+      const result = await onCreate({
+        longUrl: trimmedUrl,
+        ...(trimmedTitle ? { title: trimmedTitle } : {}),
+      })
 
       if (result.success === false) {
         return { error: result.error, success: false }
@@ -98,19 +102,36 @@ function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
       <DialogHeader>
         <DialogTitle>Create short URL</DialogTitle>
         <DialogDescription>
-          Paste the long URL you want to shorten.
+          Add a name and the long URL you want to shorten.
         </DialogDescription>
       </DialogHeader>
 
-      <div className="grid gap-2 py-4">
-        <Label htmlFor="original-url">Original URL</Label>
-        <Input
-          id="original-url"
-          name="longUrl"
-          type="url"
-          placeholder="https://example.com/very-long-path"
-          required
-        />
+      <div className="grid gap-4 py-4">
+        <div className="grid gap-2">
+          <Label htmlFor="link-title">Title</Label>
+          <Input
+            id="link-title"
+            name="title"
+            type="text"
+            placeholder="e.g. Product launch page"
+            maxLength={100}
+          />
+          <p className="text-xs text-muted-foreground">
+            Optional — helps you remember what this link is for.
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="original-url">Original URL</Label>
+          <Input
+            id="original-url"
+            name="longUrl"
+            type="url"
+            placeholder="https://example.com/very-long-path"
+            required
+          />
+        </div>
+
         {formState.error ? (
           <p className="text-sm text-destructive">{formState.error}</p>
         ) : null}

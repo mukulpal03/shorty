@@ -20,14 +20,21 @@ export const getAllUrlsController = async (req: Request, res: Response) => {
 
 export const createShortUrlController = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
-  const { longUrl } = req.body;
+  const { longUrl, title } = req.body;
 
   if (!longUrl) {
     throw new BadRequestError("Long URL is required");
   }
 
+  const trimmedTitle =
+    typeof title === "string" ? title.trim().slice(0, 100) : undefined;
+
   const user = await getOrCreateUserByClerkId(userId!);
-  const shortUrl = await createShortUrlService(user._id, longUrl);
+  const shortUrl = await createShortUrlService(
+    user._id,
+    longUrl,
+    trimmedTitle || undefined,
+  );
   res.status(201).json({ shortUrl });
 };
 

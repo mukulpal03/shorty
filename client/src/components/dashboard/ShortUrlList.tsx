@@ -24,7 +24,7 @@ import { getErrorMessage } from "@/lib/api/errors"
 import { buildPublicShortUrl, copyToClipboard } from "@/lib/clipboard"
 import { formatDate } from "@/lib/format-date"
 import { getShortLinkDisplay } from "@/lib/short-url"
-import type { ShortUrl } from "@/types/url"
+import type { CreateUrlInput, ShortUrl } from "@/types/url"
 
 type CreateUrlResult =
   | { success: true; url: ShortUrl }
@@ -36,7 +36,7 @@ type ShortUrlListProps = {
   error: string | null
   onRetry: () => void
   isCreating: boolean
-  onCreate: (longUrl: string) => Promise<CreateUrlResult>
+  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
 }
 
 export function ShortUrlList({
@@ -96,6 +96,7 @@ export function ShortUrlList({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Title</TableHead>
             <TableHead>Short link</TableHead>
             <TableHead className="hidden md:table-cell">Original URL</TableHead>
             <TableHead className="hidden sm:table-cell">Created</TableHead>
@@ -132,6 +133,11 @@ function ShortUrlRow({ url }: { url: ShortUrl }) {
 
   return (
     <TableRow>
+      <TableCell>
+        <p className="max-w-[160px] truncate font-medium">
+          {url.title || "—"}
+        </p>
+      </TableCell>
       <TableCell>
         <div className="space-y-1">
           <p className="font-mono text-sm font-medium">{shortLink}</p>

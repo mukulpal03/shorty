@@ -1,6 +1,7 @@
 export type ShortUrl = {
   id: string
   shortUrl: string
+  title?: string
   originalUrl: string
   accessCount: number
   createdAt: string
@@ -8,6 +9,7 @@ export type ShortUrl = {
 
 export type UrlDocument = {
   _id: string
+  title?: string
   originalUrl: string
   shortUrl: string
   accessCount?: number
@@ -19,8 +21,9 @@ export type GetAllUrlsResponse = {
   urls?: UrlDocument[]
 }
 
-export type CreateUrlRequest = {
+export type CreateUrlInput = {
   longUrl: string
+  title?: string
 }
 
 export type CreateUrlResponse = {

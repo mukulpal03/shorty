@@ -7,6 +7,7 @@ import Url from "./url.model";
 export const createShortUrlService = async (
   owner: Types.ObjectId,
   longUrl: string,
+  title?: string,
 ) => {
   const shortUrl = crypto
     .createHash("md5")
@@ -19,6 +20,7 @@ export const createShortUrlService = async (
       owner,
       originalUrl: longUrl,
       shortUrl,
+      ...(title ? { title } : {}),
     });
   } catch (error) {
     rethrowMongoError(error);

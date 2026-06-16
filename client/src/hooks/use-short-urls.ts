@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/react"
 
 import { getErrorMessage } from "@/lib/api/errors"
 import { createShortUrl, fetchAllUrls } from "@/lib/api/urls"
-import type { ShortUrl } from "@/types/url"
+import type { CreateUrlInput, ShortUrl } from "@/types/url"
 
 type UseShortUrlsState = {
   urls: ShortUrl[]
@@ -84,12 +84,12 @@ export function useShortUrls() {
     }
   }, [getToken])
 
-  const createUrl = useCallback(async (longUrl: string): Promise<CreateUrlResult> => {
+  const createUrl = useCallback(async (input: CreateUrlInput): Promise<CreateUrlResult> => {
     setState((current) => ({ ...current, isCreating: true }))
 
     try {
       const token = await getToken()
-      const url = await createShortUrl(token, longUrl)
+      const url = await createShortUrl(token, input)
       setState((current) => ({
         ...current,
         urls: [url, ...current.urls],
