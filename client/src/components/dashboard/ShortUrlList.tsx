@@ -1,4 +1,6 @@
-import { Copy, ExternalLink, RefreshCw, Trash2 } from "lucide-react"
+import { Check, Copy, ExternalLink, RefreshCw, Trash2 } from "lucide-react"
+import { useRef, useState } from "react"
+import { toast } from "sonner"
 
 import { DashboardEmptyAction } from "@/components/dashboard/DashboardHeader"
 import { Button } from "@/components/ui/button"
@@ -18,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { buildPublicShortUrl, copyToClipboard } from "@/lib/clipboard"
 import { formatDate } from "@/lib/format-date"
 import { getShortLinkDisplay } from "@/lib/short-url"
 import type { ShortUrl } from "@/types/url"
@@ -110,6 +113,17 @@ export function ShortUrlList({
 
 function ShortUrlRow({ url }: { url: ShortUrl }) {
   const shortLink = getShortLinkDisplay(url.shortUrl)
+  const publicShortUrl = buildPublicShortUrl(url.shortUrl)
+  const [didCopy, setDidCopy] = useState(false)
+  const resetTimerRef = useRef<number | null>(null)
+
+  async function handleCopy() {
+    await copyToClipboard(publicShortUrl)
+    toast.success("Copied link to clipboard")
+    setDidCopy(true)
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current)
+    resetTimerRef.current = window.setTimeout(() => setDidCopy(false), 1200)
+  }
 
   return (
     <TableRow>
@@ -131,8 +145,13 @@ function ShortUrlRow({ url }: { url: ShortUrl }) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-1">
-          <Button variant="ghost" size="icon-sm" aria-label="Copy link">
-            <Copy />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Copy link"
+            onClick={() => void handleCopy()}
+          >
+            {didCopy ? <Check /> : <Copy />}
           </Button>
           <Button variant="ghost" size="icon-sm" aria-label="Delete link">
             <Trash2 />
