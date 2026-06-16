@@ -20,13 +20,14 @@ export function DashboardHeader({
   const createDisabled = isLoading || isCreating
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Your links</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="shorty-eyebrow">link registry</p>
+        <h1 className="shorty-heading text-2xl sm:text-3xl">Your links</h1>
+        <p className="shorty-mono mt-2 text-xs text-(--shorty-muted)">
           {isLoading
-            ? "Loading your short links..."
-            : `${urlCount} short ${urlCount === 1 ? "link" : "links"} in your workspace.`}
+            ? "loading your short links..."
+            : `${urlCount} short ${urlCount === 1 ? "link" : "links"} in your workspace`}
         </p>
       </div>
 
@@ -34,7 +35,10 @@ export function DashboardHeader({
         onCreate={onCreate}
         disabled={createDisabled}
         trigger={
-          <Button disabled={createDisabled}>
+          <Button
+            disabled={createDisabled}
+            className="shorty-mono h-9 rounded-full bg-(--shorty-ink) px-4 text-xs font-medium text-(--shorty-surface) hover:bg-(--shorty-ink)/90"
+          >
             <Plus data-icon="inline-start" />
             Create short URL
           </Button>
@@ -58,7 +62,10 @@ export function DashboardEmptyAction({
       onCreate={onCreate}
       disabled={isCreating}
       trigger={
-        <Button disabled={isCreating}>
+        <Button
+          disabled={isCreating}
+          className="shorty-mono h-9 rounded-full bg-(--shorty-ink) px-4 text-xs font-medium text-(--shorty-surface) hover:bg-(--shorty-ink)/90"
+        >
           <Link2 data-icon="inline-start" />
           Create your first link
         </Button>

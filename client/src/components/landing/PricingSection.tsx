@@ -2,94 +2,73 @@ import { Check } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { SectionHeader } from "@/components/common/SectionHeader"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Item,
-  ItemContent,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item"
 import { PLANS } from "@/constants/landing"
 import { ROUTES } from "@/constants/routes"
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="pricing" className="shorty-section">
+      <div className="shorty-container">
         <SectionHeader
-          eyebrow="Pricing"
+          eyebrow="pricing"
           title="Simple, transparent pricing"
           description="Start free and upgrade when you need more. No hidden fees, cancel anytime."
         />
 
         <div className="mt-14 grid gap-4 lg:grid-cols-3">
           {PLANS.map((plan) => (
-            <Card
+            <article
               key={plan.name}
-              className={
-                plan.highlighted
-                  ? "relative ring-2 ring-primary/20 shadow-lg shadow-primary/5"
-                  : undefined
-              }
+              className="shorty-panel shorty-plan-card"
+              data-highlighted={plan.highlighted}
             >
-              {plan.highlighted && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  Most popular
-                </Badge>
-              )}
-              <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                <div className="pt-2">
-                  <span className="text-4xl font-semibold tracking-tight">
-                    {plan.price}
+              {plan.highlighted ? (
+                <span className="shorty-plan-card__badge">most popular</span>
+              ) : null}
+
+              <p className="shorty-mono text-xs text-(--shorty-muted)">
+                /{plan.name.toLowerCase()}
+              </p>
+              <h3 className="mt-2 text-lg font-semibold">{plan.name}</h3>
+              <p className="mt-1 text-sm text-(--shorty-muted)">
+                {plan.description}
+              </p>
+
+              <div className="mt-5 flex items-baseline gap-1">
+                <span className="shorty-stat-value text-[2rem]">{plan.price}</span>
+                {plan.price !== "$0" ? (
+                  <span className="shorty-mono text-xs text-(--shorty-muted)">
+                    /mo
                   </span>
-                  {plan.price !== "$0" && (
-                    <span className="text-sm text-muted-foreground">/mo</span>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ItemGroup className="gap-2">
-                  {plan.features.map((feature) => (
-                    <Item
-                      key={feature}
-                      size="sm"
-                      variant="default"
-                      className="border-transparent px-0 py-1"
-                    >
-                      <ItemMedia variant="icon">
-                        <Check />
-                      </ItemMedia>
-                      <ItemContent>
-                        <ItemTitle className="font-normal text-muted-foreground">
-                          {feature}
-                        </ItemTitle>
-                      </ItemContent>
-                    </Item>
-                  ))}
-                </ItemGroup>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  variant={plan.highlighted ? "default" : "outline"}
-                  className="w-full"
-                  asChild
-                >
-                  <Link to={ROUTES.dashboard}>Get started</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+                ) : null}
+              </div>
+
+              <ul className="mt-6 flex flex-1 flex-col gap-2.5">
+                {plan.features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm text-(--shorty-muted)"
+                  >
+                    <Check
+                      className="mt-0.5 size-3.5 shrink-0 text-(--shorty-signal)"
+                      aria-hidden="true"
+                    />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to={ROUTES.dashboard}
+                className={
+                  plan.highlighted
+                    ? "shorty-cta mt-8 w-full justify-center"
+                    : "shorty-ghost-btn mt-8 w-full justify-center"
+                }
+              >
+                get started
+              </Link>
+            </article>
           ))}
         </div>
       </div>

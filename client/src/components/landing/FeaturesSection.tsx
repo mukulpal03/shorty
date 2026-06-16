@@ -1,46 +1,50 @@
 import { SectionHeader } from "@/components/common/SectionHeader"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item"
-import { FEATURES } from "@/constants/landing"
+import { FEATURES, SITE } from "@/constants/landing"
+
+function slugify(text: string) {
+  return text.toLowerCase().replace(/\s+/g, "-")
+}
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="features" className="shorty-section">
+      <div className="shorty-container">
         <SectionHeader
-          eyebrow="Features"
+          eyebrow="features"
           title="Everything you need to manage links at scale"
           description="From solo creators to growing teams, Shorty gives you the tools to create, share, and measure every link."
         />
 
-        <ItemGroup className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature) => (
-            <Item
-              key={feature.title}
-              variant="outline"
-              className="flex-col items-start hover:bg-muted/30"
-            >
-              <ItemMedia
-                variant="icon"
-                className="size-9 rounded-lg border border-border bg-muted/50"
+        <div className="shorty-feature-grid mt-14">
+          {FEATURES.map((feature, index) => {
+            const slug = slugify(feature.title)
+            const isHero = index === 0
+
+            return (
+              <article
+                key={feature.title}
+                className={
+                  isHero ? "shorty-feature-card shorty-feature-card--hero" : "shorty-feature-card"
+                }
               >
-                <feature.icon />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>{feature.title}</ItemTitle>
-                <ItemDescription className="line-clamp-none">
-                  {feature.description}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          ))}
-        </ItemGroup>
+                <div className="shorty-feature-card__route">
+                  <span className="shorty-feature-card__method">GET</span>
+                  <span className="shorty-feature-card__path">
+                    <strong>{SITE.domain}</strong>/{slug}
+                  </span>
+                  <span className="shorty-feature-card__icon" aria-hidden="true">
+                    <feature.icon />
+                  </span>
+                </div>
+
+                <div className="shorty-feature-card__body">
+                  <h3 className="shorty-feature-card__title">{feature.title}</h3>
+                  <p className="shorty-feature-card__desc">{feature.description}</p>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

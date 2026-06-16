@@ -1,7 +1,4 @@
 import { Logo } from "@/components/common/Logo"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { FOOTER_LINKS, SITE } from "@/constants/landing"
 
 const linkGroups = [
@@ -12,30 +9,33 @@ const linkGroups = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/60 bg-muted/30">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <footer className="border-t border-(--shorty-wire) bg-(--shorty-surface)">
+      <div className="shorty-container py-12 sm:py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <Logo />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-(--shorty-muted)">
               {SITE.description}
+            </p>
+            <p className="shorty-mono mt-5 inline-flex rounded-md border border-(--shorty-wire) bg-(--shorty-canvas) px-2.5 py-1 text-[0.6875rem] text-(--shorty-muted)">
+              {SITE.domain}
             </p>
           </div>
 
           {linkGroups.map((group) => (
             <div key={group.title}>
-              <h3 className="text-sm font-medium">{group.title}</h3>
-              <ul className="mt-4 space-y-1">
+              <h3 className="shorty-mono text-[0.625rem] font-medium uppercase tracking-[0.08em] text-(--shorty-muted)">
+                {group.title}
+              </h3>
+              <ul className="mt-4 space-y-2">
                 {group.links.map((link) => (
                   <li key={link.label}>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="h-auto p-0 text-muted-foreground"
-                      asChild
+                    <a
+                      href={link.href}
+                      className="text-sm text-(--shorty-muted) transition-colors hover:text-(--shorty-ink)"
                     >
-                      <a href={link.href}>{link.label}</a>
-                    </Button>
+                      {link.label}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -43,15 +43,13 @@ export function Footer() {
           ))}
         </div>
 
-        <Separator className="my-8" />
-
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-(--shorty-wire) pt-8 sm:flex-row">
+          <p className="shorty-mono text-xs text-(--shorty-muted)">
+            © {new Date().getFullYear()} {SITE.name}
           </p>
-          <Badge variant="outline" className="font-mono">
-            {SITE.domain}
-          </Badge>
+          <p className="shorty-mono text-xs text-(--shorty-muted)">
+            redirect fast · track everything
+          </p>
         </div>
       </div>
     </footer>

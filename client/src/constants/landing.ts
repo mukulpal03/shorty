@@ -28,11 +28,6 @@ export type Step = {
   description: string
 }
 
-export type Stat = {
-  value: string
-  label: string
-}
-
 export type Plan = {
   name: string
   price: string
@@ -53,13 +48,6 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#how-it-works" },
   { label: "Pricing", href: "#pricing" },
-]
-
-export const STATS: Stat[] = [
-  { value: "10M+", label: "Links created" },
-  { value: "<50ms", label: "Avg. redirect" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "120+", label: "Countries" },
 ]
 
 export const FEATURES: Feature[] = [

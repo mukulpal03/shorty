@@ -2,20 +2,29 @@ import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useAuth } from "@clerk/react"
 
-import { Logo } from "@/components/common/Logo"
-import { Button } from "@/components/ui/button"
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu"
 import { NAV_LINKS } from "@/constants/landing"
 import { ROUTES } from "@/constants/routes"
-import { cn } from "@/lib/utils"
+
+import { NavbarPathLink } from "./NavbarPathLink"
+import { NavbarShell } from "./NavbarShell"
 
 type NavbarProps = {
   className?: string
+}
+
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <>
+      {NAV_LINKS.map((link) => (
+        <NavbarPathLink
+          key={link.href}
+          href={link.href}
+          label={link.label.toLowerCase().replace(/\s+/g, "-")}
+          onClick={onNavigate}
+        />
+      ))}
+    </>
+  )
 }
 
 export function Navbar({ className }: NavbarProps) {
@@ -23,56 +32,31 @@ export function Navbar({ className }: NavbarProps) {
   const showSignedIn = isLoaded && isSignedIn
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md",
-        className
-      )}
-    >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Logo />
-
-        <NavigationMenu viewport={false} className="hidden md:flex">
-          <NavigationMenuList>
-            {NAV_LINKS.map((link) => (
-              <NavigationMenuItem key={link.href}>
-                <NavigationMenuLink href={link.href}>
-                  {link.label}
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <div className="flex items-center gap-2">
+    <NavbarShell
+      className={className}
+      desktopNav={<NavLinks />}
+      mobileNav={(close) => <NavLinks onNavigate={close} />}
+      actions={
+        <>
           {!showSignedIn ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:inline-flex"
-              asChild
-            >
-              <Link to={ROUTES.signIn}>Log in</Link>
-            </Button>
+            <Link to={ROUTES.signIn} className="navbar-ghost hidden sm:inline-flex">
+              log in
+            </Link>
           ) : null}
 
           {!showSignedIn ? (
-            <Button size="sm" asChild>
-              <Link to={ROUTES.signUp}>
-                Get started
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
+            <Link to={ROUTES.signUp} className="navbar-cta">
+              get started
+              <ArrowRight aria-hidden="true" />
+            </Link>
           ) : (
-            <Button size="sm" asChild>
-              <Link to={ROUTES.dashboard}>
-                Dashboard
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
+            <Link to={ROUTES.dashboard} className="navbar-cta">
+              dashboard
+              <ArrowRight aria-hidden="true" />
+            </Link>
           )}
-        </div>
-      </div>
-    </header>
+        </>
+      }
+    />
   )
 }

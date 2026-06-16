@@ -9,6 +9,8 @@ import { getErrorMessage } from "@/lib/api/errors"
 import { notifyWarning } from "@/lib/api/notify"
 import { syncMe } from "@/lib/api/users"
 
+import "@/styles/shorty-ui.css"
+
 export function DashboardPage() {
   const { isLoaded, isSignedIn, getToken } = useAuth()
   const {
@@ -37,9 +39,9 @@ export function DashboardPage() {
   }, [getToken, isLoaded, isSignedIn])
 
   return (
-    <div className="min-h-svh">
+    <div className="shorty-app min-h-svh">
       <DashboardNavbar />
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <main className="shorty-container py-8 sm:py-10">
         <div className="space-y-8">
           <DashboardHeader
             urlCount={urls.length}

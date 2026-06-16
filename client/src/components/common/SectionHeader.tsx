@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 
 type SectionHeaderProps = {
   eyebrow?: string
@@ -24,19 +23,13 @@ export function SectionHeader({
         className
       )}
     >
-      {eyebrow && (
-        <Badge variant="outline" className="mb-3 uppercase">
-          {eyebrow}
-        </Badge>
-      )}
-      <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        {title}
-      </h2>
-      {description && (
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
+      {eyebrow ? <p className="shorty-eyebrow">{eyebrow}</p> : null}
+      <h2 className="shorty-heading">{title}</h2>
+      {description ? (
+        <p className={cn("shorty-lead", align === "center" && "mx-auto")}>
           {description}
         </p>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -2,70 +2,64 @@ import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useAuth } from "@clerk/react"
 
-import { GridBackground } from "@/components/common/GridBackground"
 import { UrlShortenerMockup } from "@/components/landing/UrlShortenerMockup"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { HERO_BADGES, SITE } from "@/constants/landing"
 import { ROUTES } from "@/constants/routes"
 
 export function HeroSection() {
   const { isLoaded, isSignedIn } = useAuth()
   const showSignedIn = isLoaded && isSignedIn
+  const [headline, subline] = SITE.tagline.split(".")
 
   return (
-    <section className="relative overflow-hidden pb-16 pt-12 sm:pb-24 sm:pt-20">
-      <GridBackground />
+    <section className="shorty-section relative overflow-hidden pb-8 pt-2 sm:pb-12 sm:pt-4">
+      <div className="shorty-container relative">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div>
+            <p className="shorty-eyebrow">url compression</p>
 
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            {SITE.tagline.split(".")[0]}.
-            <span className="block text-muted-foreground">
-              {SITE.tagline.split(".")[1]?.trim()}.
-            </span>
-          </h1>
+            <h1 className="shorty-heading max-w-xl">
+              {headline.trim()}.
+              <span className="mt-2 block font-normal text-(--shorty-muted)">
+                {subline?.trim()}.
+              </span>
+            </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
-            {SITE.description}
-          </p>
+            <p className="shorty-lead max-w-lg">{SITE.description}</p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            {!showSignedIn ? (
-              <Button size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.signUp}>
-                  Start for free
-                  <ArrowRight data-icon="inline-end" />
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              {!showSignedIn ? (
+                <Link to={ROUTES.signUp} className="shorty-cta w-fit">
+                  start for free
+                  <ArrowRight aria-hidden="true" />
                 </Link>
-              </Button>
-            ) : null}
+              ) : null}
 
-            {!showSignedIn ? (
-              <Button variant="outline" size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.signIn}>View demo</Link>
-              </Button>
-            ) : (
-              <Button size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.dashboard}>
-                  Go to dashboard
-                  <ArrowRight data-icon="inline-end" />
+              {!showSignedIn ? (
+                <Link to={ROUTES.signIn} className="shorty-ghost-btn w-fit">
+                  view demo
                 </Link>
-              </Button>
-            )}
+              ) : (
+                <Link to={ROUTES.dashboard} className="shorty-cta w-fit">
+                  go to dashboard
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              )}
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-2">
+              {HERO_BADGES.map(({ icon: Icon, label }) => (
+                <span key={label} className="shorty-chip">
+                  <Icon aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            {HERO_BADGES.map(({ icon: Icon, label }) => (
-              <Badge key={label} variant="outline">
-                <Icon data-icon="inline-start" />
-                {label}
-              </Badge>
-            ))}
+          <div className="lg:pt-4">
+            <UrlShortenerMockup />
           </div>
-        </div>
-
-        <div className="mt-16 sm:mt-20">
-          <UrlShortenerMockup />
         </div>
       </div>
     </section>

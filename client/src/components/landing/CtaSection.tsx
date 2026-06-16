@@ -2,14 +2,6 @@ import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useAuth } from "@clerk/react"
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { ROUTES } from "@/constants/routes"
 
 export function CtaSection() {
@@ -17,42 +9,46 @@ export function CtaSection() {
   const showSignedIn = isLoaded && isSignedIn
 
   return (
-    <section className="border-t border-border/60 py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Card className="overflow-hidden bg-muted/30 text-center">
-          <CardHeader className="mx-auto max-w-lg items-center px-6 pt-14 sm:px-12 sm:pt-16">
-            <CardTitle className="text-3xl text-balance sm:text-4xl">
-              Ready to shorten smarter?
-            </CardTitle>
-            <CardDescription className="text-base">
-              Join thousands of marketers, founders, and teams who trust Shorty
-              for their most important links.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center gap-3 pb-14 sm:flex-row sm:pb-16">
-            {!showSignedIn ? (
-              <Button size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.signUp}>
-                  Create free account
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
-            ) : null}
+    <section className="shorty-section border-t border-(--shorty-wire)">
+      <div className="shorty-container">
+        <div className="shorty-panel shorty-terminal mx-auto max-w-3xl">
+          <div className="shorty-terminal__bar">
+            <span className="shorty-terminal__dot" />
+            <span className="shorty-terminal__dot" />
+            <span className="shorty-terminal__dot" />
+            <span className="shorty-terminal__title">~/shorty — ready</span>
+          </div>
 
-            {!showSignedIn ? (
-              <Button variant="outline" size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.signIn}>View dashboard</Link>
-              </Button>
-            ) : (
-              <Button size="lg" className="h-10 px-5" asChild>
-                <Link to={ROUTES.dashboard}>
-                  Open dashboard
-                  <ArrowRight data-icon="inline-end" />
+          <div className="px-6 py-12 text-center sm:px-10 sm:py-14">
+            <h2 className="shorty-heading text-2xl sm:text-3xl">
+              Ready to shorten smarter?
+            </h2>
+            <p className="shorty-lead mx-auto mt-4">
+              Join thousands of marketers, founders, and teams who trust Shorty for
+              their most important links.
+            </p>
+
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              {!showSignedIn ? (
+                <Link to={ROUTES.signUp} className="shorty-cta">
+                  create free account
+                  <ArrowRight aria-hidden="true" />
                 </Link>
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+              ) : null}
+
+              {!showSignedIn ? (
+                <Link to={ROUTES.signIn} className="shorty-ghost-btn">
+                  view dashboard
+                </Link>
+              ) : (
+                <Link to={ROUTES.dashboard} className="shorty-cta">
+                  open dashboard
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
