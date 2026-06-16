@@ -11,7 +11,18 @@ import { syncMe } from "@/lib/api/users"
 
 export function DashboardPage() {
   const { isLoaded, isSignedIn, getToken } = useAuth()
-  const { urls, isLoading, isCreating, error, refetch, createUrl } = useShortUrls()
+  const {
+    urls,
+    isLoading,
+    isCreating,
+    updatingId,
+    deletingId,
+    error,
+    refetch,
+    createUrl,
+    updateUrl,
+    deleteUrl,
+  } = useShortUrls()
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return
@@ -40,7 +51,11 @@ export function DashboardPage() {
             error={error}
             onRetry={refetch}
             isCreating={isCreating}
+            updatingId={updatingId}
+            deletingId={deletingId}
             onCreate={createUrl}
+            onUpdate={updateUrl}
+            onDelete={deleteUrl}
           />
         </div>
       </main>

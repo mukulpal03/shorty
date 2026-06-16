@@ -2,19 +2,22 @@ import { useCallback, useEffect, useState } from "react"
 import { useAuth } from "@clerk/react"
 
 import { getErrorMessage } from "@/lib/api/errors"
-import { createShortUrl, fetchAllUrls } from "@/lib/api/urls"
-import type { CreateUrlInput, ShortUrl } from "@/types/url"
+import {
+  createShortUrl,
+  deleteShortUrl,
+  fetchAllUrls,
+  updateShortUrl,
+} from "@/lib/api/urls"
+import type { CreateUrlInput, ShortUrl, UpdateUrlInput, UrlMutationResult } from "@/types/url"
 
 type UseShortUrlsState = {
   urls: ShortUrl[]
   isLoading: boolean
   isCreating: boolean
+  updatingId: string | null
+  deletingId: string | null
   error: string | null
 }
-
-type CreateUrlResult =
-  | { success: true; url: ShortUrl }
-  | { success: false; error: string }
 
 async function loadUrls(
   token: string | null,
@@ -33,6 +36,8 @@ export function useShortUrls() {
     urls: [],
     isLoading: true,
     isCreating: false,
+    updatingId: null,
+    deletingId: null,
     error: null,
   })
 
@@ -84,31 +89,82 @@ export function useShortUrls() {
     }
   }, [getToken])
 
-  const createUrl = useCallback(async (input: CreateUrlInput): Promise<CreateUrlResult> => {
-    setState((current) => ({ ...current, isCreating: true }))
+  const createUrl = useCallback(
+    async (input: CreateUrlInput): Promise<UrlMutationResult> => {
+      setState((current) => ({ ...current, isCreating: true }))
 
-    try {
-      const token = await getToken()
-      const url = await createShortUrl(token, input)
-      setState((current) => ({
-        ...current,
-        urls: [url, ...current.urls],
-        error: null,
-      }))
-      return { success: true, url }
-    } catch (error) {
-      return { success: false, error: getErrorMessage(error) }
-    } finally {
-      setState((current) => ({ ...current, isCreating: false }))
-    }
-  }, [getToken])
+      try {
+        const token = await getToken()
+        const url = await createShortUrl(token, input)
+        setState((current) => ({
+          ...current,
+          urls: [url, ...current.urls],
+          error: null,
+        }))
+        return { success: true, url }
+      } catch (error) {
+        return { success: false, error: getErrorMessage(error) }
+      } finally {
+        setState((current) => ({ ...current, isCreating: false }))
+      }
+    },
+    [getToken],
+  )
+
+  const updateUrl = useCallback(
+    async (id: string, shortCode: string, input: UpdateUrlInput): Promise<UrlMutationResult> => {
+      setState((current) => ({ ...current, updatingId: id }))
+
+      try {
+        const token = await getToken()
+        const url = await updateShortUrl(token, shortCode, input)
+        setState((current) => ({
+          ...current,
+          urls: current.urls.map((item) => (item.id === id ? url : item)),
+          error: null,
+        }))
+        return { success: true, url }
+      } catch (error) {
+        return { success: false, error: getErrorMessage(error) }
+      } finally {
+        setState((current) => ({ ...current, updatingId: null }))
+      }
+    },
+    [getToken],
+  )
+
+  const deleteUrl = useCallback(
+    async (id: string, shortCode: string): Promise<UrlMutationResult> => {
+      setState((current) => ({ ...current, deletingId: id }))
+
+      try {
+        const token = await getToken()
+        await deleteShortUrl(token, shortCode)
+        setState((current) => ({
+          ...current,
+          urls: current.urls.filter((item) => item.id !== id),
+          error: null,
+        }))
+        return { success: true }
+      } catch (error) {
+        return { success: false, error: getErrorMessage(error) }
+      } finally {
+        setState((current) => ({ ...current, deletingId: null }))
+      }
+    },
+    [getToken],
+  )
 
   return {
     urls: state.urls,
     isLoading: state.isLoading,
     isCreating: state.isCreating,
+    updatingId: state.updatingId,
+    deletingId: state.deletingId,
     error: state.error,
     refetch,
     createUrl,
+    updateUrl,
+    deleteUrl,
   }
 }

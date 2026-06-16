@@ -1,11 +1,13 @@
 import { API_ENDPOINTS } from "@/constants/api"
-import { apiGet, apiPost } from "@/lib/api/client"
+import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api/client"
 import { ApiError } from "@/lib/api/errors"
 import type {
   CreateUrlInput,
   CreateUrlResponse,
   GetAllUrlsResponse,
   ShortUrl,
+  UpdateUrlInput,
+  UpdateUrlResponse,
   UrlDocument,
 } from "@/types/url"
 
@@ -53,4 +55,36 @@ export async function createShortUrl(
   }
 
   return mapUrlDocument(response.shortUrl)
+}
+
+export async function updateShortUrl(
+  token: string | null,
+  shortCode: string,
+  input: UpdateUrlInput,
+): Promise<ShortUrl> {
+  const response = await apiPut<UpdateUrlResponse>(
+    API_ENDPOINTS.urlBySlug(shortCode),
+    {
+      longUrl: input.longUrl,
+      title: input.title ?? "",
+    },
+    {
+      headers: authHeaders(token),
+    },
+  )
+
+  if (!response?.url) {
+    throw new ApiError("Failed to update short URL")
+  }
+
+  return mapUrlDocument(response.url)
+}
+
+export async function deleteShortUrl(
+  token: string | null,
+  shortCode: string,
+): Promise<void> {
+  await apiDelete(API_ENDPOINTS.urlBySlug(shortCode), {
+    headers: authHeaders(token),
+  })
 }

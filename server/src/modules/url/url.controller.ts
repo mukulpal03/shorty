@@ -54,7 +54,7 @@ export const retrieveOriginalUrlController = async (
 
 export const updateLongUrlController = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
-  const { longUrl } = req.body;
+  const { longUrl, title } = req.body;
   const { shortUrl } = req.params;
 
   if (!longUrl) {
@@ -65,8 +65,16 @@ export const updateLongUrlController = async (req: Request, res: Response) => {
     throw new BadRequestError("Short URL is required");
   }
 
+  const trimmedTitle =
+    typeof title === "string" ? title.trim().slice(0, 100) : undefined;
+
   const user = await getOrCreateUserByClerkId(userId!);
-  const url = await updateLongUrlService(user._id, String(shortUrl), longUrl);
+  const url = await updateLongUrlService(
+    user._id,
+    String(shortUrl),
+    longUrl,
+    trimmedTitle,
+  );
   res.status(200).json({ url });
 };
 

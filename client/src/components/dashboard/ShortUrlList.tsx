@@ -1,8 +1,10 @@
-import { Check, Copy, ExternalLink, RefreshCw, Trash2 } from "lucide-react"
+import { Check, Copy, ExternalLink, Pencil, RefreshCw, Trash2 } from "lucide-react"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
+import { DeleteUrlDialog } from "@/components/dashboard/DeleteUrlDialog"
 import { DashboardEmptyAction } from "@/components/dashboard/DashboardHeader"
+import { EditUrlDialog } from "@/components/dashboard/EditUrlDialog"
 import { Button } from "@/components/ui/button"
 import {
   Empty,
@@ -24,11 +26,7 @@ import { getErrorMessage } from "@/lib/api/errors"
 import { buildPublicShortUrl, copyToClipboard } from "@/lib/clipboard"
 import { formatDate } from "@/lib/format-date"
 import { getShortLinkDisplay } from "@/lib/short-url"
-import type { CreateUrlInput, ShortUrl } from "@/types/url"
-
-type CreateUrlResult =
-  | { success: true; url: ShortUrl }
-  | { success: false; error: string }
+import type { CreateUrlInput, ShortUrl, UpdateUrlInput, UrlMutationResult } from "@/types/url"
 
 type ShortUrlListProps = {
   urls: ShortUrl[]
@@ -36,7 +34,15 @@ type ShortUrlListProps = {
   error: string | null
   onRetry: () => void
   isCreating: boolean
-  onCreate: (input: CreateUrlInput) => Promise<CreateUrlResult>
+  updatingId: string | null
+  deletingId: string | null
+  onCreate: (input: CreateUrlInput) => Promise<UrlMutationResult>
+  onUpdate: (
+    id: string,
+    shortCode: string,
+    input: UpdateUrlInput,
+  ) => Promise<UrlMutationResult>
+  onDelete: (id: string, shortCode: string) => Promise<UrlMutationResult>
 }
 
 export function ShortUrlList({
@@ -45,7 +51,11 @@ export function ShortUrlList({
   error,
   onRetry,
   isCreating,
+  updatingId,
+  deletingId,
   onCreate,
+  onUpdate,
+  onDelete,
 }: ShortUrlListProps) {
   if (isLoading) {
     return (
@@ -100,12 +110,19 @@ export function ShortUrlList({
             <TableHead>Short link</TableHead>
             <TableHead className="hidden md:table-cell">Original URL</TableHead>
             <TableHead className="hidden sm:table-cell">Created</TableHead>
-            <TableHead className="w-[100px] text-right">Actions</TableHead>
+            <TableHead className="w-[130px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {urls.map((url) => (
-            <ShortUrlRow key={url.id} url={url} />
+            <ShortUrlRow
+              key={url.id}
+              url={url}
+              isUpdating={updatingId === url.id}
+              isDeleting={deletingId === url.id}
+              onUpdate={(input) => onUpdate(url.id, url.shortUrl, input)}
+              onDelete={() => onDelete(url.id, url.shortUrl)}
+            />
           ))}
         </TableBody>
       </Table>
@@ -113,11 +130,26 @@ export function ShortUrlList({
   )
 }
 
-function ShortUrlRow({ url }: { url: ShortUrl }) {
+type ShortUrlRowProps = {
+  url: ShortUrl
+  isUpdating: boolean
+  isDeleting: boolean
+  onUpdate: (input: UpdateUrlInput) => Promise<UrlMutationResult>
+  onDelete: () => Promise<UrlMutationResult>
+}
+
+function ShortUrlRow({
+  url,
+  isUpdating,
+  isDeleting,
+  onUpdate,
+  onDelete,
+}: ShortUrlRowProps) {
   const shortLink = getShortLinkDisplay(url.shortUrl)
   const publicShortUrl = buildPublicShortUrl(url.shortUrl)
   const [didCopy, setDidCopy] = useState(false)
   const resetTimerRef = useRef<number | null>(null)
+  const isMutating = isUpdating || isDeleting
 
   async function handleCopy() {
     try {
@@ -160,13 +192,41 @@ function ShortUrlRow({ url }: { url: ShortUrl }) {
             variant="ghost"
             size="icon-sm"
             aria-label="Copy link"
+            disabled={isMutating}
             onClick={() => void handleCopy()}
           >
             {didCopy ? <Check /> : <Copy />}
           </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Delete link">
-            <Trash2 />
-          </Button>
+          <EditUrlDialog
+            url={url}
+            disabled={isMutating}
+            onUpdate={onUpdate}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Edit link"
+                disabled={isMutating}
+              >
+                <Pencil />
+              </Button>
+            }
+          />
+          <DeleteUrlDialog
+            url={url}
+            disabled={isMutating}
+            onDelete={onDelete}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Delete link"
+                disabled={isMutating}
+              >
+                <Trash2 />
+              </Button>
+            }
+          />
         </div>
       </TableCell>
     </TableRow>

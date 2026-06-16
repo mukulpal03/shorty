@@ -26,9 +26,22 @@ export type CreateUrlInput = {
   title?: string
 }
 
+export type UpdateUrlInput = {
+  longUrl: string
+  title?: string
+}
+
 export type CreateUrlResponse = {
   shortUrl?: UrlDocument
 }
+
+export type UpdateUrlResponse = {
+  url?: UrlDocument
+}
+
+export type UrlMutationResult =
+  | { success: true; url?: ShortUrl }
+  | { success: false; error: string }
 
 export type ApiErrorResponse = {
   error?: string

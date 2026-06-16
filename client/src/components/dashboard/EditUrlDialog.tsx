@@ -14,41 +14,43 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { CreateUrlInput, UrlMutationResult } from "@/types/url"
+import type { ShortUrl, UpdateUrlInput, UrlMutationResult } from "@/types/url"
 
-type CreateUrlFormState = {
+type EditUrlFormState = {
   error: string | null
   success: boolean
 }
 
-const initialFormState: CreateUrlFormState = {
+const initialFormState: EditUrlFormState = {
   error: null,
   success: false,
 }
 
-type CreateUrlDialogProps = {
-  trigger: ReactNode
-  onCreate: (input: CreateUrlInput) => Promise<UrlMutationResult>
+type EditUrlDialogProps = {
+  url: ShortUrl
   disabled?: boolean
+  trigger: ReactNode
+  onUpdate: (input: UpdateUrlInput) => Promise<UrlMutationResult>
 }
 
-type CreateUrlFormProps = {
-  onCreate: (input: CreateUrlInput) => Promise<UrlMutationResult>
+type EditUrlFormProps = {
+  url: ShortUrl
+  onUpdate: (input: UpdateUrlInput) => Promise<UrlMutationResult>
   onSuccess: () => void
   onCancel: () => void
 }
 
-function CreateUrlSubmitButton() {
+function EditUrlSubmitButton() {
   const { pending } = useFormStatus()
 
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Creating..." : "Create link"}
+      {pending ? "Saving..." : "Save changes"}
     </Button>
   )
 }
 
-function CreateUrlCancelButton({ onCancel }: { onCancel: () => void }) {
+function EditUrlCancelButton({ onCancel }: { onCancel: () => void }) {
   const { pending } = useFormStatus()
 
   return (
@@ -63,9 +65,9 @@ function CreateUrlCancelButton({ onCancel }: { onCancel: () => void }) {
   )
 }
 
-function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
+function EditUrlForm({ url, onUpdate, onSuccess, onCancel }: EditUrlFormProps) {
   const [formState, formAction] = useActionState(
-    async (_previousState: CreateUrlFormState, formData: FormData) => {
+    async (_previousState: EditUrlFormState, formData: FormData) => {
       const trimmedUrl = formData.get("longUrl")?.toString().trim() ?? ""
       const trimmedTitle = formData.get("title")?.toString().trim() ?? ""
 
@@ -73,9 +75,9 @@ function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
         return { error: "Please enter a URL.", success: false }
       }
 
-      const result = await onCreate({
+      const result = await onUpdate({
         longUrl: trimmedUrl,
-        ...(trimmedTitle ? { title: trimmedTitle } : {}),
+        title: trimmedTitle,
       })
 
       if (result.success === false) {
@@ -96,34 +98,32 @@ function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
   return (
     <form action={formAction}>
       <DialogHeader>
-        <DialogTitle>Create short URL</DialogTitle>
+        <DialogTitle>Edit link</DialogTitle>
         <DialogDescription>
-          Add a name and the long URL you want to shorten.
+          Update the title or destination URL for this short link.
         </DialogDescription>
       </DialogHeader>
 
       <div className="grid gap-4 py-4">
         <div className="grid gap-2">
-          <Label htmlFor="link-title">Title</Label>
+          <Label htmlFor={`edit-title-${url.id}`}>Title</Label>
           <Input
-            id="link-title"
+            id={`edit-title-${url.id}`}
             name="title"
             type="text"
+            defaultValue={url.title ?? ""}
             placeholder="e.g. Product launch page"
             maxLength={100}
           />
-          <p className="text-xs text-muted-foreground">
-            Optional — helps you remember what this link is for.
-          </p>
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="original-url">Original URL</Label>
+          <Label htmlFor={`edit-url-${url.id}`}>Original URL</Label>
           <Input
-            id="original-url"
+            id={`edit-url-${url.id}`}
             name="longUrl"
             type="url"
-            placeholder="https://example.com/very-long-path"
+            defaultValue={url.originalUrl}
             required
           />
         </div>
@@ -134,18 +134,19 @@ function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
       </div>
 
       <DialogFooter>
-        <CreateUrlCancelButton onCancel={onCancel} />
-        <CreateUrlSubmitButton />
+        <EditUrlCancelButton onCancel={onCancel} />
+        <EditUrlSubmitButton />
       </DialogFooter>
     </form>
   )
 }
 
-export function CreateUrlDialog({
-  trigger,
-  onCreate,
+export function EditUrlDialog({
+  url,
   disabled = false,
-}: CreateUrlDialogProps) {
+  trigger,
+  onUpdate,
+}: EditUrlDialogProps) {
   const [open, setOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
 
@@ -157,7 +158,7 @@ export function CreateUrlDialog({
   }
 
   const handleSuccess = () => {
-    toast.success("Short link created")
+    toast.success("Link updated")
     handleOpenChange(false)
   }
 
@@ -168,9 +169,10 @@ export function CreateUrlDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         {open ? (
-          <CreateUrlForm
+          <EditUrlForm
             key={formKey}
-            onCreate={onCreate}
+            url={url}
+            onUpdate={onUpdate}
             onSuccess={handleSuccess}
             onCancel={() => handleOpenChange(false)}
           />

@@ -46,7 +46,7 @@ export const SITE = {
   tagline: "Short links. Real insights.",
   description:
     "Turn long URLs into branded short links, track every click, and understand your audience — all in one place.",
-  domain: "http://localhost:3000/api/url",
+  domain: "localhost:3000/api/url",
 } as const
 
 export const NAV_LINKS: NavLink[] = [

@@ -45,10 +45,14 @@ export const updateLongUrlService = async (
   owner: Types.ObjectId,
   shortUrl: string,
   longUrl: string,
+  title?: string,
 ) => {
   const url = await Url.findOneAndUpdate(
     { shortUrl, owner },
-    { originalUrl: longUrl },
+    {
+      originalUrl: longUrl,
+      ...(title !== undefined ? { title } : {}),
+    },
     { returnDocument: "after" },
   );
 
