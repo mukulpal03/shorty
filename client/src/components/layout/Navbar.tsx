@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useAuth } from "@clerk/react"
 
 import { Logo } from "@/components/common/Logo"
 import { Button } from "@/components/ui/button"
@@ -18,6 +19,9 @@ type NavbarProps = {
 }
 
 export function Navbar({ className }: NavbarProps) {
+  const { isLoaded, isSignedIn } = useAuth()
+  const showSignedIn = isLoaded && isSignedIn
+
   return (
     <header
       className={cn(
@@ -41,20 +45,32 @@ export function Navbar({ className }: NavbarProps) {
         </NavigationMenu>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden sm:inline-flex"
-            asChild
-          >
-            <Link to={ROUTES.dashboard}>Log in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link to={ROUTES.dashboard}>
-              Get started
-              <ArrowRight data-icon="inline-end" />
-            </Link>
-          </Button>
+          {!showSignedIn ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex"
+              asChild
+            >
+              <Link to={ROUTES.signIn}>Log in</Link>
+            </Button>
+          ) : null}
+
+          {!showSignedIn ? (
+            <Button size="sm" asChild>
+              <Link to={ROUTES.signUp}>
+                Get started
+                <ArrowRight data-icon="inline-end" />
+              </Link>
+            </Button>
+          ) : (
+            <Button size="sm" asChild>
+              <Link to={ROUTES.dashboard}>
+                Dashboard
+                <ArrowRight data-icon="inline-end" />
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>

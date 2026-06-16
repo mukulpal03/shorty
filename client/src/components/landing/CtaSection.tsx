@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useAuth } from "@clerk/react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +13,9 @@ import {
 import { ROUTES } from "@/constants/routes"
 
 export function CtaSection() {
+  const { isLoaded, isSignedIn } = useAuth()
+  const showSignedIn = isLoaded && isSignedIn
+
   return (
     <section className="border-t border-border/60 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -26,15 +30,27 @@ export function CtaSection() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center gap-3 pb-14 sm:flex-row sm:pb-16">
-            <Button size="lg" className="h-10 px-5" asChild>
-              <Link to={ROUTES.dashboard}>
-                Create free account
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="h-10 px-5" asChild>
-              <Link to={ROUTES.dashboard}>View dashboard</Link>
-            </Button>
+            {!showSignedIn ? (
+              <Button size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.signUp}>
+                  Create free account
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+            ) : null}
+
+            {!showSignedIn ? (
+              <Button variant="outline" size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.signIn}>View dashboard</Link>
+              </Button>
+            ) : (
+              <Button size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.dashboard}>
+                  Open dashboard
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

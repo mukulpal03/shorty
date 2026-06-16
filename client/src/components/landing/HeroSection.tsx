@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useAuth } from "@clerk/react"
 
 import { GridBackground } from "@/components/common/GridBackground"
 import { UrlShortenerMockup } from "@/components/landing/UrlShortenerMockup"
@@ -9,6 +10,9 @@ import { HERO_BADGES, SITE } from "@/constants/landing"
 import { ROUTES } from "@/constants/routes"
 
 export function HeroSection() {
+  const { isLoaded, isSignedIn } = useAuth()
+  const showSignedIn = isLoaded && isSignedIn
+
   return (
     <section className="relative overflow-hidden pb-16 pt-12 sm:pb-24 sm:pt-20">
       <GridBackground />
@@ -27,15 +31,27 @@ export function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" className="h-10 px-5" asChild>
-              <Link to={ROUTES.dashboard}>
-                Start for free
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="h-10 px-5" asChild>
-              <Link to={ROUTES.dashboard}>View demo</Link>
-            </Button>
+            {!showSignedIn ? (
+              <Button size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.signUp}>
+                  Start for free
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+            ) : null}
+
+            {!showSignedIn ? (
+              <Button variant="outline" size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.signIn}>View demo</Link>
+              </Button>
+            ) : (
+              <Button size="lg" className="h-10 px-5" asChild>
+                <Link to={ROUTES.dashboard}>
+                  Go to dashboard
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+            )}
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
