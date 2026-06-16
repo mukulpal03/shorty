@@ -6,7 +6,7 @@ export async function getOrCreateUserByClerkId(clerkUserId: string) {
   const user = await User.findOneAndUpdate(
     { clerkUserId },
     { $setOnInsert: { clerkUserId } },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: "after" },
   );
 
   if (!user) {
@@ -45,7 +45,7 @@ export async function upsertCurrentUser(clerkUserId: string) {
   const user = await User.findOneAndUpdate(
     { clerkUserId },
     { $set: update },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: "after" },
   );
 
   if (!user) {
