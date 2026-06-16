@@ -1,12 +1,19 @@
 import { clerkClient } from "@clerk/express";
+import { InternalServerError } from "../../errors/AppError";
 import User from "./user.model";
 
 export async function getOrCreateUserByClerkId(clerkUserId: string) {
-  return User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { clerkUserId },
     { $setOnInsert: { clerkUserId } },
     { upsert: true, new: true },
   );
+
+  if (!user) {
+    throw new InternalServerError("Failed to create user");
+  }
+
+  return user;
 }
 
 export async function upsertCurrentUser(clerkUserId: string) {
@@ -41,6 +48,9 @@ export async function upsertCurrentUser(clerkUserId: string) {
     { upsert: true, new: true },
   );
 
+  if (!user) {
+    throw new InternalServerError("Failed to sync user");
+  }
+
   return user;
 }
-

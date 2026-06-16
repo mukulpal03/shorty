@@ -1,6 +1,8 @@
-import Url from "./url.model";
-import crypto from "crypto";
 import type { Types } from "mongoose";
+import crypto from "crypto";
+import { NotFoundError } from "../../errors/AppError";
+import { rethrowMongoError } from "../../errors/mongo";
+import Url from "./url.model";
 
 export const createShortUrlService = async (
   owner: Types.ObjectId,
@@ -13,29 +15,28 @@ export const createShortUrlService = async (
     .slice(0, 7);
 
   try {
-    const url = await Url.create({
+    return await Url.create({
       owner,
       originalUrl: longUrl,
-      shortUrl: shortUrl,
+      shortUrl,
     });
-
-    return url;
   } catch (error) {
-    console.error("Error creating short URL:", error);
+    rethrowMongoError(error);
   }
 };
 
 export const retrieveLongUrlService = async (shortUrl: string) => {
-  try {
-    const url = await Url.findOneAndUpdate(
-      { shortUrl },
-      { $inc: { accessCount: 1 } },
-      { returnDocument: "after" },
-    );
-    return url;
-  } catch (error) {
-    console.error("Error retrieving long URL:", error);
+  const url = await Url.findOneAndUpdate(
+    { shortUrl },
+    { $inc: { accessCount: 1 } },
+    { returnDocument: "after" },
+  );
+
+  if (!url) {
+    throw new NotFoundError("URL not found");
   }
+
+  return url;
 };
 
 export const updateLongUrlService = async (
@@ -43,47 +44,45 @@ export const updateLongUrlService = async (
   shortUrl: string,
   longUrl: string,
 ) => {
-  try {
-    const url = await Url.findOneAndUpdate(
-      { shortUrl, owner },
-      { originalUrl: longUrl },
-      { returnDocument: "after" },
-    );
-    return url;
-  } catch (error) {
-    console.error("Error updating long URL:", error);
+  const url = await Url.findOneAndUpdate(
+    { shortUrl, owner },
+    { originalUrl: longUrl },
+    { returnDocument: "after" },
+  );
+
+  if (!url) {
+    throw new NotFoundError("URL not found");
   }
+
+  return url;
 };
 
 export const deleteLongUrlService = async (
   owner: Types.ObjectId,
   shortUrl: string,
 ) => {
-  try {
-    const url = await Url.findOneAndDelete({ shortUrl, owner });
-    return url;
-  } catch (error) {
-    console.error("Error deleting long URL:", error);
+  const url = await Url.findOneAndDelete({ shortUrl, owner });
+
+  if (!url) {
+    throw new NotFoundError("URL not found");
   }
+
+  return url;
 };
 
 export const getAnalyticsService = async (
   owner: Types.ObjectId,
   shortUrl: string,
 ) => {
-  try {
-    const url = await Url.findOne({ shortUrl, owner });
-    return url;
-  } catch (error) {
-    console.error("Error getting analytics:", error);
+  const url = await Url.findOne({ shortUrl, owner });
+
+  if (!url) {
+    throw new NotFoundError("URL not found");
   }
+
+  return url;
 };
 
 export const getAllUrlsService = async (owner: Types.ObjectId) => {
-  try {
-    const urls = await Url.find({ owner }).sort({ createdAt: -1 });
-    return urls;
-  } catch (error) {
-    console.error("Error fetching all URLs:", error);
-  }
+  return Url.find({ owner }).sort({ createdAt: -1 });
 };

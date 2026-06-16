@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import urlRoutes from "./modules/url/url.routes";
 import userRoutes from "./modules/user/user.routes";
 
@@ -18,5 +19,8 @@ app.use(clerkMiddleware());
 
 app.use("/api/url", urlRoutes);
 app.use("/api/users", userRoutes);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
