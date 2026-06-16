@@ -2,6 +2,7 @@ import { API_ENDPOINTS } from "@/constants/api"
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api/client"
 import { ApiError } from "@/lib/api/errors"
 import type {
+  AnalyticsUrlResponse,
   CreateUrlInput,
   CreateUrlResponse,
   GetAllUrlsResponse,
@@ -87,4 +88,22 @@ export async function deleteShortUrl(
   await apiDelete(API_ENDPOINTS.urlBySlug(shortCode), {
     headers: authHeaders(token),
   })
+}
+
+export async function fetchUrlAnalytics(
+  token: string | null,
+  shortCode: string,
+): Promise<ShortUrl> {
+  const response = await apiGet<AnalyticsUrlResponse>(
+    API_ENDPOINTS.urlStats(shortCode),
+    {
+      headers: authHeaders(token),
+    },
+  )
+
+  if (!response?.url) {
+    throw new ApiError("Failed to load link analytics")
+  }
+
+  return mapUrlDocument(response.url)
 }

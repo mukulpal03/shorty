@@ -17,11 +17,13 @@ export function DashboardPage() {
     isCreating,
     updatingId,
     deletingId,
+    refreshingAnalyticsId,
     error,
     refetch,
     createUrl,
     updateUrl,
     deleteUrl,
+    refreshUrlAnalytics,
   } = useShortUrls()
 
   useEffect(() => {
@@ -53,9 +55,11 @@ export function DashboardPage() {
             isCreating={isCreating}
             updatingId={updatingId}
             deletingId={deletingId}
+            refreshingAnalyticsId={refreshingAnalyticsId}
             onCreate={createUrl}
             onUpdate={updateUrl}
             onDelete={deleteUrl}
+            onRefreshAnalytics={refreshUrlAnalytics}
           />
         </div>
       </main>

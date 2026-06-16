@@ -6,6 +6,7 @@ import {
   createShortUrl,
   deleteShortUrl,
   fetchAllUrls,
+  fetchUrlAnalytics,
   updateShortUrl,
 } from "@/lib/api/urls"
 import type { CreateUrlInput, ShortUrl, UpdateUrlInput, UrlMutationResult } from "@/types/url"
@@ -16,6 +17,7 @@ type UseShortUrlsState = {
   isCreating: boolean
   updatingId: string | null
   deletingId: string | null
+  refreshingAnalyticsId: string | null
   error: string | null
 }
 
@@ -38,6 +40,7 @@ export function useShortUrls() {
     isCreating: false,
     updatingId: null,
     deletingId: null,
+    refreshingAnalyticsId: null,
     error: null,
   })
 
@@ -155,16 +158,40 @@ export function useShortUrls() {
     [getToken],
   )
 
+  const refreshUrlAnalytics = useCallback(
+    async (id: string, shortCode: string): Promise<UrlMutationResult> => {
+      setState((current) => ({ ...current, refreshingAnalyticsId: id }))
+
+      try {
+        const token = await getToken()
+        const url = await fetchUrlAnalytics(token, shortCode)
+        setState((current) => ({
+          ...current,
+          urls: current.urls.map((item) => (item.id === id ? url : item)),
+          error: null,
+        }))
+        return { success: true, url }
+      } catch (error) {
+        return { success: false, error: getErrorMessage(error) }
+      } finally {
+        setState((current) => ({ ...current, refreshingAnalyticsId: null }))
+      }
+    },
+    [getToken],
+  )
+
   return {
     urls: state.urls,
     isLoading: state.isLoading,
     isCreating: state.isCreating,
     updatingId: state.updatingId,
     deletingId: state.deletingId,
+    refreshingAnalyticsId: state.refreshingAnalyticsId,
     error: state.error,
     refetch,
     createUrl,
     updateUrl,
     deleteUrl,
+    refreshUrlAnalytics,
   }
 }

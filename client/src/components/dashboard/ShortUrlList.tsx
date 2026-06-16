@@ -1,4 +1,4 @@
-import { Check, Copy, ExternalLink, Pencil, RefreshCw, Trash2 } from "lucide-react"
+import { Check, Copy, ExternalLink, MousePointerClick, Pencil, RefreshCw, Trash2 } from "lucide-react"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
@@ -36,6 +36,7 @@ type ShortUrlListProps = {
   isCreating: boolean
   updatingId: string | null
   deletingId: string | null
+  refreshingAnalyticsId: string | null
   onCreate: (input: CreateUrlInput) => Promise<UrlMutationResult>
   onUpdate: (
     id: string,
@@ -43,6 +44,10 @@ type ShortUrlListProps = {
     input: UpdateUrlInput,
   ) => Promise<UrlMutationResult>
   onDelete: (id: string, shortCode: string) => Promise<UrlMutationResult>
+  onRefreshAnalytics: (
+    id: string,
+    shortCode: string,
+  ) => Promise<UrlMutationResult>
 }
 
 export function ShortUrlList({
@@ -53,9 +58,11 @@ export function ShortUrlList({
   isCreating,
   updatingId,
   deletingId,
+  refreshingAnalyticsId,
   onCreate,
   onUpdate,
   onDelete,
+  onRefreshAnalytics,
 }: ShortUrlListProps) {
   if (isLoading) {
     return (
@@ -109,6 +116,7 @@ export function ShortUrlList({
             <TableHead>Title</TableHead>
             <TableHead>Short link</TableHead>
             <TableHead className="hidden md:table-cell">Original URL</TableHead>
+            <TableHead className="hidden sm:table-cell text-right">Clicks</TableHead>
             <TableHead className="hidden sm:table-cell">Created</TableHead>
             <TableHead className="w-[130px] text-right">Actions</TableHead>
           </TableRow>
@@ -120,8 +128,12 @@ export function ShortUrlList({
               url={url}
               isUpdating={updatingId === url.id}
               isDeleting={deletingId === url.id}
+              isRefreshingAnalytics={refreshingAnalyticsId === url.id}
               onUpdate={(input) => onUpdate(url.id, url.shortUrl, input)}
               onDelete={() => onDelete(url.id, url.shortUrl)}
+              onRefreshAnalytics={() =>
+                onRefreshAnalytics(url.id, url.shortUrl)
+              }
             />
           ))}
         </TableBody>
@@ -134,22 +146,26 @@ type ShortUrlRowProps = {
   url: ShortUrl
   isUpdating: boolean
   isDeleting: boolean
+  isRefreshingAnalytics: boolean
   onUpdate: (input: UpdateUrlInput) => Promise<UrlMutationResult>
   onDelete: () => Promise<UrlMutationResult>
+  onRefreshAnalytics: () => Promise<UrlMutationResult>
 }
 
 function ShortUrlRow({
   url,
   isUpdating,
   isDeleting,
+  isRefreshingAnalytics,
   onUpdate,
   onDelete,
+  onRefreshAnalytics,
 }: ShortUrlRowProps) {
   const shortLink = getShortLinkDisplay(url.shortUrl)
   const publicShortUrl = buildPublicShortUrl(url.shortUrl)
   const [didCopy, setDidCopy] = useState(false)
   const resetTimerRef = useRef<number | null>(null)
-  const isMutating = isUpdating || isDeleting
+  const isMutating = isUpdating || isDeleting || isRefreshingAnalytics
 
   async function handleCopy() {
     try {
@@ -160,6 +176,14 @@ function ShortUrlRow({
       resetTimerRef.current = window.setTimeout(() => setDidCopy(false), 1200)
     } catch (error) {
       toast.error(getErrorMessage(error) || "Could not copy link")
+    }
+  }
+
+  async function handleRefreshAnalytics() {
+    const result = await onRefreshAnalytics()
+
+    if ("error" in result) {
+      toast.error(result.error)
     }
   }
 
@@ -176,12 +200,35 @@ function ShortUrlRow({
           <p className="truncate text-xs text-muted-foreground md:hidden">
             {url.originalUrl}
           </p>
+          <p className="inline-flex items-center gap-1 text-xs text-muted-foreground sm:hidden">
+            <MousePointerClick className="size-3" />
+            {url.accessCount.toLocaleString()} clicks
+          </p>
         </div>
       </TableCell>
       <TableCell className="hidden max-w-xs md:table-cell">
         <span className="block truncate text-muted-foreground">
           {url.originalUrl}
         </span>
+      </TableCell>
+      <TableCell className="hidden sm:table-cell text-right">
+        <div className="flex items-center justify-end gap-1">
+          <span className="inline-flex items-center gap-1 text-sm tabular-nums text-muted-foreground">
+            <MousePointerClick className="size-3.5" />
+            {url.accessCount.toLocaleString()}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Refresh click count"
+            disabled={isMutating}
+            onClick={() => void handleRefreshAnalytics()}
+          >
+            <RefreshCw
+              className={isRefreshingAnalytics ? "animate-spin" : undefined}
+            />
+          </Button>
+        </div>
       </TableCell>
       <TableCell className="hidden text-muted-foreground sm:table-cell">
         {formatDate(url.createdAt)}

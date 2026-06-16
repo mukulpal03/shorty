@@ -39,6 +39,10 @@ export type UpdateUrlResponse = {
   url?: UrlDocument
 }
 
+export type AnalyticsUrlResponse = {
+  url?: UrlDocument
+}
+
 export type UrlMutationResult =
   | { success: true; url?: ShortUrl }
   | { success: false; error: string }
