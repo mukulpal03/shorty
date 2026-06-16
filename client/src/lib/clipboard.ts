@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS } from "@/constants/api"
+import { publicShortUrlPath, SHORT_LINK_BASE_URL } from "@/constants/api"
 
 export async function copyToClipboard(text: string) {
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
@@ -25,13 +25,13 @@ export function buildPublicShortUrl(shortCodeOrUrl: string) {
 
   const slug = value.replace(/^\/+/, "")
   const base =
-    API_BASE_URL ||
+    SHORT_LINK_BASE_URL ||
     (typeof window !== "undefined" && window.location?.origin
       ? window.location.origin
       : "")
 
-  if (!base) return API_ENDPOINTS.urlBySlug(slug)
+  if (!base) return publicShortUrlPath(slug)
 
   const normalizedBase = base.replace(/\/+$/, "")
-  return `${normalizedBase}${API_ENDPOINTS.urlBySlug(slug)}`
+  return `${normalizedBase}${publicShortUrlPath(slug)}`
 }

@@ -6,7 +6,6 @@ import {
   deleteLongUrlController,
   getAllUrlsController,
   getAnalyticsController,
-  retrieveOriginalUrlController,
   updateLongUrlController,
 } from "./url.controller";
 
@@ -19,7 +18,6 @@ router
 
 router
   .route("/:shortUrl")
-  .get(asyncHandler(retrieveOriginalUrlController))
   .put(requireClerkAuth, asyncHandler(updateLongUrlController))
   .delete(requireClerkAuth, asyncHandler(deleteLongUrlController));
 

@@ -1,5 +1,17 @@
-import { SITE } from "@/constants/landing"
+import { SHORT_LINK_BASE_URL } from "@/constants/api"
+
+function getShortLinkHost() {
+  if (SHORT_LINK_BASE_URL) {
+    return SHORT_LINK_BASE_URL.replace(/^https?:\/\//, "").replace(/\/+$/, "")
+  }
+
+  if (typeof window !== "undefined" && window.location?.host) {
+    return window.location.host
+  }
+
+  return "localhost:3000"
+}
 
 export function getShortLinkDisplay(slug: string): string {
-  return `${SITE.domain}/${slug}`
+  return `${getShortLinkHost()}/${slug.replace(/^\/+/, "")}`
 }
