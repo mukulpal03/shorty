@@ -11,8 +11,8 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path={ROUTES.home} element={<LandingPage />} />
-      <Route path={ROUTES.signIn} element={<SignInPage />} />
-      <Route path={ROUTES.signUp} element={<SignUpPage />} />
+      <Route path={`${ROUTES.signIn}/*`} element={<SignInPage />} />
+      <Route path={`${ROUTES.signUp}/*`} element={<SignUpPage />} />
       <Route
         path={ROUTES.dashboard}
         element={

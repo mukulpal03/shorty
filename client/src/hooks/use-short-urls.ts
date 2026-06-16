@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { useAuth } from "@clerk/react"
 
 import { getErrorMessage } from "@/lib/api/errors"
 import { createShortUrl, fetchAllUrls } from "@/lib/api/urls"
@@ -15,9 +16,11 @@ type CreateUrlResult =
   | { success: true; url: ShortUrl }
   | { success: false; error: string }
 
-async function loadUrls(): Promise<Pick<UseShortUrlsState, "urls" | "error">> {
+async function loadUrls(
+  token: string | null,
+): Promise<Pick<UseShortUrlsState, "urls" | "error">> {
   try {
-    const urls = await fetchAllUrls()
+    const urls = await fetchAllUrls(token)
     return { urls, error: null }
   } catch (error) {
     return { urls: [], error: getErrorMessage(error) }
@@ -25,6 +28,7 @@ async function loadUrls(): Promise<Pick<UseShortUrlsState, "urls" | "error">> {
 }
 
 export function useShortUrls() {
+  const { isLoaded, isSignedIn, getToken } = useAuth()
   const [state, setState] = useState<UseShortUrlsState>({
     urls: [],
     isLoading: true,
@@ -35,28 +39,38 @@ export function useShortUrls() {
   useEffect(() => {
     let cancelled = false
 
-    void loadUrls().then((result) => {
-      if (cancelled) return
-      setState((current) => ({ ...current, ...result, isLoading: false }))
-    })
+    if (!isLoaded) return
+
+    if (!isSignedIn) {
+      return
+    }
+
+    void getToken()
+      .then((token) => loadUrls(token))
+      .then((result) => {
+        if (cancelled) return
+        setState((current) => ({ ...current, ...result, isLoading: false }))
+      })
 
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [getToken, isLoaded, isSignedIn])
 
   const refetch = useCallback(async () => {
     setState((current) => ({ ...current, isLoading: true, error: null }))
 
-    const result = await loadUrls()
+    const token = await getToken()
+    const result = await loadUrls(token)
     setState((current) => ({ ...current, ...result, isLoading: false }))
-  }, [])
+  }, [getToken])
 
   const createUrl = useCallback(async (longUrl: string): Promise<CreateUrlResult> => {
     setState((current) => ({ ...current, isCreating: true }))
 
     try {
-      const url = await createShortUrl(longUrl)
+      const token = await getToken()
+      const url = await createShortUrl(token, longUrl)
       setState((current) => ({
         ...current,
         urls: [url, ...current.urls],
@@ -68,7 +82,7 @@ export function useShortUrls() {
     } finally {
       setState((current) => ({ ...current, isCreating: false }))
     }
-  }, [])
+  }, [getToken])
 
   return {
     urls: state.urls,

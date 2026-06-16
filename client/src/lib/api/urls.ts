@@ -8,6 +8,10 @@ import type {
   UrlDocument,
 } from "@/types/url"
 
+function authHeaders(token: string | null | undefined) {
+  return token ? { Authorization: `Bearer ${token}` } : undefined
+}
+
 function mapUrlDocument(document: UrlDocument): ShortUrl {
   return {
     id: document._id,
@@ -18,16 +22,23 @@ function mapUrlDocument(document: UrlDocument): ShortUrl {
   }
 }
 
-export async function fetchAllUrls(): Promise<ShortUrl[]> {
-  const response = await apiGet<GetAllUrlsResponse>(API_ENDPOINTS.urls)
+export async function fetchAllUrls(token: string | null): Promise<ShortUrl[]> {
+  const response = await apiGet<GetAllUrlsResponse>(API_ENDPOINTS.urls, {
+    headers: authHeaders(token),
+  })
   const documents = response?.urls ?? []
 
   return documents.map(mapUrlDocument)
 }
 
-export async function createShortUrl(longUrl: string): Promise<ShortUrl> {
+export async function createShortUrl(
+  token: string | null,
+  longUrl: string,
+): Promise<ShortUrl> {
   const response = await apiPost<CreateUrlResponse>(API_ENDPOINTS.urls, {
     longUrl,
+  }, {
+    headers: authHeaders(token),
   })
 
   if (!response?.shortUrl) {

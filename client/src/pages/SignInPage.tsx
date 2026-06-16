@@ -1,6 +1,6 @@
-import { SignIn } from "@clerk/react"
+import { SignIn } from "@clerk/react";
 
-import { ROUTES } from "@/constants/routes"
+import { ROUTES } from "@/constants/routes";
 
 export function SignInPage() {
   return (
@@ -10,8 +10,8 @@ export function SignInPage() {
         routing="path"
         signUpUrl={ROUTES.signUp}
         fallbackRedirectUrl={ROUTES.dashboard}
+        forceRedirectUrl={ROUTES.dashboard}
       />
     </main>
-  )
+  );
 }
-

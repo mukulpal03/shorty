@@ -2,9 +2,24 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { ShortUrlList } from "@/components/dashboard/ShortUrlList"
 import { DashboardNavbar } from "@/components/layout/DashboardNavbar"
 import { useShortUrls } from "@/hooks/use-short-urls"
+import { syncMe } from "@/lib/api/users"
+import { useAuth } from "@clerk/react"
+import { useEffect } from "react"
 
 export function DashboardPage() {
+  const { isLoaded, isSignedIn, getToken } = useAuth()
   const { urls, isLoading, isCreating, error, refetch, createUrl } = useShortUrls()
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return
+
+    void getToken()
+      .then((token) => syncMe(token))
+      .catch((e) => {
+        // non-blocking: dashboard can still work even if user sync fails
+        console.error("Failed to sync user:", e)
+      })
+  }, [getToken, isLoaded, isSignedIn])
 
   return (
     <div className="min-h-svh">

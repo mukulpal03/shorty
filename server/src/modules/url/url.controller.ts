@@ -1,4 +1,6 @@
 import type { Request, Response } from "express";
+import { getAuth } from "@clerk/express";
+import { getOrCreateUserByClerkId } from "../user/user.service";
 import {
   createShortUrlService,
   deleteLongUrlService,
@@ -9,8 +11,12 @@ import {
 } from "./url.service";
 
 export const getAllUrlsController = async (_req: Request, res: Response) => {
+  const { userId } = getAuth(_req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
   try {
-    const urls = await getAllUrlsService();
+    const user = await getOrCreateUserByClerkId(userId);
+    const urls = await getAllUrlsService(user._id);
     res.status(200).json({ urls: urls ?? [] });
   } catch (error) {
     console.error("Error fetching all URLs:", error);
@@ -19,6 +25,9 @@ export const getAllUrlsController = async (_req: Request, res: Response) => {
 };
 
 export const createShortUrlController = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
   const { longUrl } = req.body;
 
   if (!longUrl) {
@@ -26,7 +35,8 @@ export const createShortUrlController = async (req: Request, res: Response) => {
   }
 
   try {
-    const shortUrl = await createShortUrlService(longUrl);
+    const user = await getOrCreateUserByClerkId(userId);
+    const shortUrl = await createShortUrlService(user._id, longUrl);
     res.status(201).json({ shortUrl });
   } catch (error) {
     console.error("Error creating short URL:", error);
@@ -59,6 +69,9 @@ export const retrieveOriginalUrlController = async (
 };
 
 export const updateLongUrlController = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
   const { longUrl } = req.body;
   const { shortUrl } = req.params;
 
@@ -71,7 +84,8 @@ export const updateLongUrlController = async (req: Request, res: Response) => {
   }
 
   try {
-    const url = await updateLongUrlService(String(shortUrl), longUrl);
+    const user = await getOrCreateUserByClerkId(userId);
+    const url = await updateLongUrlService(user._id, String(shortUrl), longUrl);
 
     if (!url) {
       return res.status(404).json({ error: "URL not found" });
@@ -85,6 +99,9 @@ export const updateLongUrlController = async (req: Request, res: Response) => {
 };
 
 export const deleteLongUrlController = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
   const { shortUrl } = req.params;
 
   if (!shortUrl) {
@@ -92,7 +109,8 @@ export const deleteLongUrlController = async (req: Request, res: Response) => {
   }
 
   try {
-    const url = await deleteLongUrlService(String(shortUrl));
+    const user = await getOrCreateUserByClerkId(userId);
+    const url = await deleteLongUrlService(user._id, String(shortUrl));
 
     if (!url) {
       return res.status(404).json({ error: "URL not found" });
@@ -106,6 +124,9 @@ export const deleteLongUrlController = async (req: Request, res: Response) => {
 };
 
 export const getAnalyticsController = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
   const { shortUrl } = req.params;
 
   if (!shortUrl) {
@@ -113,7 +134,8 @@ export const getAnalyticsController = async (req: Request, res: Response) => {
   }
 
   try {
-    const url = await getAnalyticsService(String(shortUrl));
+    const user = await getOrCreateUserByClerkId(userId);
+    const url = await getAnalyticsService(user._id, String(shortUrl));
 
     if (!url) {
       return res.status(404).json({ error: "URL not found" });

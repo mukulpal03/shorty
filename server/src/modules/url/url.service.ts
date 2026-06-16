@@ -1,11 +1,23 @@
 import Url from "./url.model";
 import crypto from "crypto";
+import type { Types } from "mongoose";
 
-export const createShortUrlService = async (longUrl: string) => {
-  const shortUrl = crypto.createHash('md5').update(longUrl).digest('base64url').slice(0, 7)
+export const createShortUrlService = async (
+  owner: Types.ObjectId,
+  longUrl: string,
+) => {
+  const shortUrl = crypto
+    .createHash("md5")
+    .update(longUrl)
+    .digest("base64url")
+    .slice(0, 7);
 
   try {
-    const url = await Url.create({ originalUrl: longUrl, shortUrl: shortUrl });
+    const url = await Url.create({
+      owner,
+      originalUrl: longUrl,
+      shortUrl: shortUrl,
+    });
 
     return url;
   } catch (error) {
@@ -27,12 +39,13 @@ export const retrieveLongUrlService = async (shortUrl: string) => {
 };
 
 export const updateLongUrlService = async (
+  owner: Types.ObjectId,
   shortUrl: string,
   longUrl: string,
 ) => {
   try {
     const url = await Url.findOneAndUpdate(
-      { shortUrl },
+      { shortUrl, owner },
       { originalUrl: longUrl },
       { returnDocument: "after" },
     );
@@ -42,27 +55,33 @@ export const updateLongUrlService = async (
   }
 };
 
-export const deleteLongUrlService = async (shortUrl: string) => {
+export const deleteLongUrlService = async (
+  owner: Types.ObjectId,
+  shortUrl: string,
+) => {
   try {
-    const url = await Url.findOneAndDelete({ shortUrl });
+    const url = await Url.findOneAndDelete({ shortUrl, owner });
     return url;
   } catch (error) {
     console.error("Error deleting long URL:", error);
   }
 };
 
-export const getAnalyticsService = async (shortUrl: string) => {
+export const getAnalyticsService = async (
+  owner: Types.ObjectId,
+  shortUrl: string,
+) => {
   try {
-    const url = await Url.findOne({ shortUrl });
+    const url = await Url.findOne({ shortUrl, owner });
     return url;
   } catch (error) {
     console.error("Error getting analytics:", error);
   }
 };
 
-export const getAllUrlsService = async () => {
+export const getAllUrlsService = async (owner: Types.ObjectId) => {
   try {
-    const urls = await Url.find().sort({ createdAt: -1 });
+    const urls = await Url.find({ owner }).sort({ createdAt: -1 });
     return urls;
   } catch (error) {
     console.error("Error fetching all URLs:", error);

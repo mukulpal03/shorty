@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { requireClerkAuth } from "../../middleware/requireClerkAuth";
 import {
   createShortUrlController,
   deleteLongUrlController,
@@ -10,14 +11,17 @@ import {
 
 const router = Router();
 
-router.route("/").get(getAllUrlsController).post(createShortUrlController);
+router
+  .route("/")
+  .get(requireClerkAuth, getAllUrlsController)
+  .post(requireClerkAuth, createShortUrlController);
 
 router
   .route("/:shortUrl")
   .get(retrieveOriginalUrlController)
-  .put(updateLongUrlController)
-  .delete(deleteLongUrlController);
+  .put(requireClerkAuth, updateLongUrlController)
+  .delete(requireClerkAuth, deleteLongUrlController);
 
-router.route("/:shortUrl/stats").get(getAnalyticsController);
+router.route("/:shortUrl/stats").get(requireClerkAuth, getAnalyticsController);
 
 export default router;
