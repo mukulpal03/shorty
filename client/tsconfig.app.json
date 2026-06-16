@@ -10,7 +10,6 @@
     "module": "esnext",
     "types": ["vite/client"],
     "skipLibCheck": true,
-    "ignoreDeprecations": "",
 
     /* Bundler mode */
     "moduleResolution": "bundler",

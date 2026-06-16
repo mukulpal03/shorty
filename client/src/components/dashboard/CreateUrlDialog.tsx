@@ -68,7 +68,7 @@ function CreateUrlCancelButton({ onCancel }: { onCancel: () => void }) {
 
 function CreateUrlForm({ onCreate, onSuccess, onCancel }: CreateUrlFormProps) {
   const [formState, formAction] = useActionState(
-    async (_previousState, formData) => {
+    async (_previousState: CreateUrlFormState, formData: FormData) => {
       const trimmedUrl = formData.get("longUrl")?.toString().trim() ?? ""
 
       if (!trimmedUrl) {
