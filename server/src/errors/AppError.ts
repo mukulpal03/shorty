@@ -18,10 +18,30 @@ export class AppError extends Error {
   }
 }
 
+export type ValidationIssue = {
+  field: string;
+  message: string;
+};
+
 export class BadRequestError extends AppError {
   constructor(message: string, code = "BAD_REQUEST") {
     super(400, message, code);
     this.name = "BadRequestError";
+  }
+}
+
+export class ValidationError extends AppError {
+  readonly details: ValidationIssue[];
+
+  constructor(details: ValidationIssue[]) {
+    const message =
+      details.length === 1
+        ? details[0]!.message
+        : "Validation failed";
+
+    super(400, message, "VALIDATION_ERROR");
+    this.name = "ValidationError";
+    this.details = details;
   }
 }
 

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { Error as MongooseError } from "mongoose";
-import { AppError } from "../errors/AppError";
+import { AppError, ValidationError } from "../errors/AppError";
 
 export function notFoundHandler(_req: Request, res: Response) {
   res.status(404).json({ error: "Not found" });
@@ -15,6 +15,14 @@ export function errorHandler(
   if (res.headersSent) {
     console.error("Error after headers sent:", err);
     return;
+  }
+
+  if (err instanceof ValidationError) {
+    return res.status(err.statusCode).json({
+      error: err.message,
+      code: err.code,
+      details: err.details,
+    });
   }
 
   if (err instanceof AppError) {

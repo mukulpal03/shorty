@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { getAuth } from "@clerk/express";
-import { BadRequestError } from "../../errors/AppError";
 import { getOrCreateUserByClerkId } from "../user/user.service";
 import {
   createShortUrlService,
@@ -22,19 +21,8 @@ export const createShortUrlController = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
   const { longUrl, title } = req.body;
 
-  if (!longUrl) {
-    throw new BadRequestError("Long URL is required");
-  }
-
-  const trimmedTitle =
-    typeof title === "string" ? title.trim().slice(0, 100) : undefined;
-
   const user = await getOrCreateUserByClerkId(userId!);
-  const shortUrl = await createShortUrlService(
-    user._id,
-    longUrl,
-    trimmedTitle || undefined,
-  );
+  const shortUrl = await createShortUrlService(user._id, longUrl, title);
   res.status(201).json({ shortUrl });
 };
 
@@ -43,12 +31,7 @@ export const retrieveOriginalUrlController = async (
   res: Response,
 ) => {
   const { shortUrl } = req.params;
-
-  if (!shortUrl) {
-    throw new BadRequestError("Short URL is required");
-  }
-
-  const url = await retrieveLongUrlService(String(shortUrl));
+  const url = await retrieveLongUrlService(shortUrl as string);
   res.status(302).redirect(url.originalUrl);
 };
 
@@ -57,24 +40,8 @@ export const updateLongUrlController = async (req: Request, res: Response) => {
   const { longUrl, title } = req.body;
   const { shortUrl } = req.params;
 
-  if (!longUrl) {
-    throw new BadRequestError("Long URL is required");
-  }
-
-  if (!shortUrl) {
-    throw new BadRequestError("Short URL is required");
-  }
-
-  const trimmedTitle =
-    typeof title === "string" ? title.trim().slice(0, 100) : undefined;
-
   const user = await getOrCreateUserByClerkId(userId!);
-  const url = await updateLongUrlService(
-    user._id,
-    String(shortUrl),
-    longUrl,
-    trimmedTitle,
-  );
+  const url = await updateLongUrlService(user._id, shortUrl as string, longUrl, title);
   res.status(200).json({ url });
 };
 
@@ -82,12 +49,8 @@ export const deleteLongUrlController = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
   const { shortUrl } = req.params;
 
-  if (!shortUrl) {
-    throw new BadRequestError("Short URL is required");
-  }
-
   const user = await getOrCreateUserByClerkId(userId!);
-  await deleteLongUrlService(user._id, String(shortUrl));
+  await deleteLongUrlService(user._id, shortUrl as string);
   res.status(204).send();
 };
 
@@ -95,11 +58,7 @@ export const getAnalyticsController = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
   const { shortUrl } = req.params;
 
-  if (!shortUrl) {
-    throw new BadRequestError("Short URL is required");
-  }
-
   const user = await getOrCreateUserByClerkId(userId!);
-  const url = await getAnalyticsService(user._id, String(shortUrl));
+  const url = await getAnalyticsService(user._id, shortUrl as string);
   res.status(200).json({ url });
 };
